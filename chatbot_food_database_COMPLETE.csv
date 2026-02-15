@@ -1,0 +1,292 @@
+food_id,food_name,alt_names,meal_type,category,calories,protein,carbs,fat,portion,source,has_pork,has_beef,has_chicken,has_seafood,has_fish,has_shellfish,has_egg,has_dairy,has_nuts,has_gluten,has_soy,is_vegetarian,is_vegan,is_high_protein,is_low_carb,is_low_fat,is_diabetic_friendly,dietary_tags
+U001,White Rice,,base,Mixed Dishes & Prepared Foods,120,2,28,0,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,vegan|no-meat
+U002,Brown Rice,,base,Mixed Dishes & Prepared Foods,125,3,26,1,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,vegan|no-meat
+U003,Black Rice,,base,Mixed Dishes & Prepared Foods,113,3,23,1,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,yes,vegan|no-meat
+U004,Red Rice,,base,Mixed Dishes & Prepared Foods,109,2,23,1,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,yes,vegan|no-meat
+U005,Wild Rice,,base,Mixed Dishes & Prepared Foods,84,3,18,0,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,yes,yes,vegan|no-meat
+U006,Basmati Rice,,base,Mixed Dishes & Prepared Foods,112,2,26,0,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,vegan|no-meat
+U007,Jasmine Rice,,base,Mixed Dishes & Prepared Foods,96,2,22,0,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,yes,vegan|no-meat
+B001,"Tapsilog (Tapa, Sinangag, Itlog)","Tapa, fried rice, egg meal",breakfast,Mixed Dishes & Prepared Foods,550,35,45,25,1 serving,Philippine Food Database,no,yes,no,no,no,no,yes,no,no,no,no,no,no,yes,no,no,no,beef|egg
+B002,"Longsilog (Longganisa, Sinangag, Itlog)","Longganisa, fried rice, egg meal",breakfast,Mixed Dishes & Prepared Foods,580,32,50,28,1 serving,Philippine Food Database,yes,no,no,no,no,no,yes,no,no,no,no,no,no,yes,no,no,no,pork|egg
+B003,"Tosilog (Tocino, Sinangag, Itlog)","Tocino, fried rice, egg meal",breakfast,Mixed Dishes & Prepared Foods,600,38,48,30,1 serving,Philippine Food Database,yes,no,no,no,no,no,yes,no,no,no,no,no,no,yes,no,no,no,pork|egg
+B004,"Bangsilog (Bangus, Sinangag, Itlog)","Milkfish, fried rice, egg meal",breakfast,Mixed Dishes & Prepared Foods,520,40,45,18,1 serving,Philippine Food Database,no,no,no,yes,yes,no,yes,yes,no,no,no,no,no,yes,no,no,no,seafood|egg|pescatarian
+B005,Silog (Sinangag at Itlog),Fried rice and egg base,breakfast,Mixed Dishes & Prepared Foods,350,12,45,15,1 serving,Philippine Food Database,no,no,no,no,no,no,yes,no,no,no,no,no,no,no,no,no,no,egg|no-meat
+B006,Beef Tapa with Rice,Tapa meal,breakfast,Mixed Dishes & Prepared Foods,480,32,48,18,1 serving,Philippine Food Database,no,yes,no,no,no,no,no,no,no,no,no,no,no,yes,no,no,no,beef
+B007,Corned Beef with Rice,Cornsilog,breakfast,Mixed Dishes & Prepared Foods,420,22,48,18,1 serving,Philippine Food Database,no,yes,no,no,no,no,yes,no,no,no,no,no,no,no,no,no,no,beef|egg
+B008,Spam with Rice,Spamsilog,breakfast,Mixed Dishes & Prepared Foods,480,20,52,22,1 serving,Philippine Food Database,no,no,no,no,no,no,yes,no,no,no,no,no,no,no,no,no,no,egg|no-meat
+B009,Hotdog with Rice,Hotsilog,breakfast,Mixed Dishes & Prepared Foods,420,15,55,16,1 serving,Philippine Food Database,no,no,no,no,no,no,yes,no,no,no,no,no,no,no,no,no,no,egg|no-meat
+B010,Tuyo with Rice,Dried fish with rice,breakfast,Mixed Dishes & Prepared Foods,320,22,42,8,1 serving,Philippine Food Database,no,no,no,yes,yes,no,no,no,no,no,no,no,no,no,no,yes,no,seafood|pescatarian
+B011,Danggit with Rice,Dried rabbitfish with rice,breakfast,Mixed Dishes & Prepared Foods,340,24,42,10,1 serving,Philippine Food Database,no,no,no,yes,yes,no,no,no,no,no,no,no,no,no,no,no,no,seafood|pescatarian
+B012,Daing na Bangus,,breakfast,Mixed Dishes & Prepared Foods,210,30,0,10,1 serving,UlamCal,no,no,no,yes,yes,no,no,no,no,no,no,no,no,yes,yes,no,yes,seafood|pescatarian
+B013,Daing na Lamayo,,breakfast,Mixed Dishes & Prepared Foods,210,30,0,10,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,no-meat
+B014,Daing na Tulingan,,breakfast,Mixed Dishes & Prepared Foods,210,30,0,10,1 serving,UlamCal,no,no,no,yes,yes,no,no,no,no,no,no,no,no,yes,yes,no,yes,seafood|pescatarian
+B015,Champorado,,breakfast,Mixed Dishes & Prepared Foods,108,2,25,0,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,no-meat
+B016,Longganisa,,breakfast,Mixed Dishes & Prepared Foods,319,12,16,23,1 serving,UlamCal,yes,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,yes,pork
+B017,Vegetable Fried Rice,Sinangag with vegetables,breakfast,Grains & Cereals,240,5,42,6,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,no,yes,no,vegetarian|vegan|no-meat
+B018,Lugaw (Plain),Rice porridge,breakfast,Grains & Cereals,180,4,38,2,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,no,yes,no,vegetarian|vegan|no-meat
+B019,Champorado,Chocolate rice porridge,breakfast,Grains & Cereals,280,6,58,3,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,no,yes,no,vegetarian|vegan|no-meat
+B020,Daing na Bangus,Marinated milkfish,breakfast,Fish & Seafood,250,32,2,12,1 serving,Philippine Food Database,no,no,no,yes,yes,no,no,yes,no,no,no,no,no,yes,yes,no,yes,seafood|pescatarian
+B021,Beef Tapa,Cured beef strips,breakfast,Meat & Poultry,220,28,3,11,1 serving,Philippine Food Database,no,yes,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,beef
+B022,Chicken Tapa,Cured chicken strips,breakfast,Meat & Poultry,200,26,3,9,1 serving,Philippine Food Database,no,no,yes,no,no,no,no,no,no,no,no,no,no,yes,yes,yes,yes,chicken
+B023,Scrambled Egg with Tomato,Pritong itlog na may kamatis,breakfast,Eggs,180,14,6,12,1 serving,Philippine Food Database,no,no,no,no,no,no,yes,no,no,no,no,yes,no,no,yes,no,yes,egg|vegetarian|no-meat
+B024,Cornsilog,"Corned beef, sinangag, itlog",breakfast,Mixed Dishes & Prepared Foods,520,28,52,22,1 serving,Philippine Food Database,no,yes,no,no,no,no,yes,no,no,no,no,no,no,yes,no,no,no,beef|egg
+B025,Spamsilog,"Spam, sinangag, itlog",breakfast,Mixed Dishes & Prepared Foods,560,24,55,28,1 serving,Philippine Food Database,yes,no,no,no,no,no,yes,no,no,no,no,no,no,no,no,no,no,pork|egg
+B026,Sardinas with Rice,Canned sardines meal,breakfast,Fish & Seafood,380,22,48,12,1 serving,Philippine Food Database,no,no,no,yes,no,no,no,no,no,no,no,no,no,no,no,no,no,seafood|pescatarian
+B027,Pritong Itlog,Fried egg,breakfast,Eggs,140,12,1,10,1 serving,Philippine Food Database,no,no,no,no,no,no,yes,no,no,no,no,yes,no,no,yes,no,yes,egg|vegetarian|no-meat
+B028,Vigan Longganisa,Ilocano sausage,breakfast,Meat & Poultry,320,16,12,24,1 serving,Philippine Food Database,yes,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,yes,pork
+B029,Sikwate,Hot chocolate tablea,breakfast,Beverages,180,4,28,7,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,yes,no,no,no,yes,no,vegetarian|no-meat
+B030,Tsokolate,Filipino hot chocolate,breakfast,Beverages,160,3,24,6,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,yes,no,no,no,yes,yes,vegetarian|no-meat
+M001,Champorado with Tuyo,Chocolate rice porridge with dried fish,main,Mixed Dishes & Prepared Foods,380,18,62,6,1 serving,Philippine Food Database,no,no,no,yes,yes,no,no,no,no,no,no,no,no,no,no,yes,no,seafood|pescatarian
+M002,Lugaw with Egg,Rice porridge with egg,main,Mixed Dishes & Prepared Foods,280,14,42,5,1 serving,Philippine Food Database,no,no,no,no,no,no,yes,no,no,no,no,no,no,no,no,yes,no,egg|no-meat
+M003,Pandesal with Eggs,3 pandesal + 2 eggs,main,Mixed Dishes & Prepared Foods,420,20,55,12,1 serving,Philippine Food Database,no,no,no,no,no,no,yes,no,no,yes,no,no,no,no,no,no,no,egg|no-meat
+M004,Chicken Adobo with Rice,Adobong manok with rice,main,Mixed Dishes & Prepared Foods,520,42,55,15,1 serving,Philippine Food Database,no,no,yes,no,no,no,no,no,no,no,no,no,no,yes,no,no,no,chicken
+M005,Sinigang na Baboy,Pork in sour tamarind soup,main,Mixed Dishes & Prepared Foods,380,28,25,18,1 serving,Philippine Food Database,yes,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,no,no,pork
+M006,Kare-Kare,Oxtail in peanut sauce,main,Mixed Dishes & Prepared Foods,620,35,48,32,1 serving,Philippine Food Database,no,yes,no,no,no,no,no,no,yes,no,no,no,no,yes,no,no,no,beef
+M007,Beef Caldereta,Beef stew in tomato sauce,main,Mixed Dishes & Prepared Foods,580,38,42,28,1 serving,Philippine Food Database,no,yes,no,no,no,no,no,no,no,no,no,no,no,yes,no,no,no,beef
+M008,Lechon Kawali with Rice,Crispy pork belly with rice,main,Mixed Dishes & Prepared Foods,680,35,52,38,1 serving,Philippine Food Database,yes,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,no,no,pork
+M009,Tinola,Chicken ginger soup,main,Mixed Dishes & Prepared Foods,320,32,22,12,1 serving,Philippine Food Database,no,no,yes,no,no,no,no,no,no,no,no,no,no,yes,no,no,yes,chicken
+M010,Pork Sinigang,Pork in sour soup,main,Mixed Dishes & Prepared Foods,420,30,28,20,1 serving,Philippine Food Database,yes,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,no,no,pork
+M011,Grilled Bangus with Rice,Inihaw na bangus with rice,main,Mixed Dishes & Prepared Foods,480,42,48,14,1 serving,Philippine Food Database,no,no,no,yes,yes,no,no,no,no,no,no,no,no,yes,no,no,no,seafood|pescatarian
+M012,Beef Mechado,Beef in tomato sauce,main,Mixed Dishes & Prepared Foods,520,38,42,22,1 serving,Philippine Food Database,no,yes,no,no,no,no,no,no,no,no,no,no,no,yes,no,no,no,beef
+M013,Pork Bistek,Pork steak Filipino style,main,Mixed Dishes & Prepared Foods,480,35,38,20,1 serving,Philippine Food Database,yes,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,no,no,pork
+M014,Fish Escabeche,Sweet and sour fish,main,Mixed Dishes & Prepared Foods,420,38,35,14,1 serving,Philippine Food Database,no,no,no,yes,yes,no,no,no,no,no,no,no,no,yes,no,no,no,seafood|pescatarian
+M015,Chicken Afritada,Chicken in tomato sauce,main,Mixed Dishes & Prepared Foods,450,36,40,16,1 serving,Philippine Food Database,no,no,yes,no,no,no,no,no,no,no,no,no,no,yes,no,no,no,chicken
+M016,Pork Menudo,Pork and liver stew,main,Mixed Dishes & Prepared Foods,520,32,45,24,1 serving,Philippine Food Database,yes,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,no,no,pork
+M017,Grilled Liempo with Rice,Grilled pork belly with rice,main,Mixed Dishes & Prepared Foods,620,38,48,32,1 serving,Philippine Food Database,yes,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,no,no,pork
+M018,Adobong Pusit,Squid adobo,main,Mixed Dishes & Prepared Foods,380,35,28,15,1 serving,Philippine Food Database,no,no,no,yes,no,yes,no,no,no,no,no,no,no,yes,no,no,no,seafood|pescatarian
+M019,Beef Tapa,Cured beef,main,Meat & Poultry,200,25,2,10,1 serving,Philippine Food Database,no,yes,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,yes,beef
+M020,Chicken Sisig,Chopped chicken with onions,main,Mixed Dishes & Prepared Foods,350,28,12,22,1 serving,Philippine Food Database,yes,no,yes,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,pork|chicken
+M021,Pork Sisig,Chopped pork with onions,main,Mixed Dishes & Prepared Foods,420,25,8,32,1 serving,Philippine Food Database,yes,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,yes,pork
+M022,Tokwa't Baboy,Tofu and pork,main,Mixed Dishes & Prepared Foods,280,18,15,18,1 serving,Philippine Food Database,yes,no,no,no,no,no,no,no,no,no,yes,no,no,no,yes,no,yes,pork
+M023,Lechon Manok,Roasted chicken,main,Meat & Poultry,450,45,5,28,1 serving,Philippine Food Database,yes,no,yes,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,pork|chicken
+M024,Crispy Pata,Deep fried pork leg,main,Meat & Poultry,780,42,18,62,1 serving,Philippine Food Database,yes,no,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,pork
+M025,Beef Pares,Braised beef with rice,main,Mixed Dishes & Prepared Foods,520,38,55,18,1 serving,Philippine Food Database,no,yes,no,no,no,no,no,no,no,no,no,no,no,yes,no,no,no,beef
+M026,Goto,Beef tripe porridge,main,Mixed Dishes & Prepared Foods,320,18,38,12,1 serving,Philippine Food Database,no,yes,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,beef
+M027,Lumpiang Shanghai,Fried spring rolls,main,Mixed Dishes & Prepared Foods,180,8,12,12,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,yes,no-meat
+M028,Siopao,Steamed bun with filling,main,Mixed Dishes & Prepared Foods,280,12,42,8,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,yes,no,no,no,no,no,yes,no,no-meat
+M029,Buko Pandan,Young coconut salad dessert,main,Sweets & Desserts,220,3,42,6,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,no-meat
+M030,Maja Blanca,Coconut pudding,main,Sweets & Desserts,260,5,48,6,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,vegan|no-meat
+M031,Buko Salad,Young coconut fruit salad,main,Sweets & Desserts,240,3,38,8,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,no-meat
+M032,Ginataang Bilo-Bilo,Sweet rice balls in coconut milk,main,Sweets & Desserts,320,4,55,10,1 serving,Philippine Food Database,no,no,no,no,no,no,no,yes,no,no,no,no,no,no,no,no,no,no-meat
+M033,Sapin-Sapin,Layered rice cake,main,Sweets & Desserts,280,5,52,6,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,yes,no,no,no,no,no,yes,no,vegan|no-meat
+M034,Nilupak,Mashed cassava/banana,main,Sweets & Desserts,240,3,48,5,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,vegan|no-meat
+M035,Pitsi-Pitsi,Cassava balls with coconut,main,Sweets & Desserts,200,2,42,3,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,vegan|no-meat
+M036,Lumpia Sariwa,Fresh spring roll,main,Mixed Dishes & Prepared Foods,220,8,32,7,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,no-meat
+M037,Ukoy,Shrimp fritters,main,Fish & Seafood,180,10,18,8,1 serving,Philippine Food Database,no,no,no,yes,no,yes,no,no,no,no,no,no,no,no,yes,yes,yes,seafood|pescatarian
+M038,Rellenong Bangus,Stuffed milkfish,main,Fish & Seafood,420,38,12,25,1 serving,Philippine Food Database,no,no,no,yes,yes,no,no,yes,no,no,no,no,no,yes,yes,no,yes,seafood|pescatarian
+M039,Pinakbet,Mixed vegetables with shrimp paste,main,Vegetables,180,8,22,7,1 serving,Philippine Food Database,no,no,no,yes,no,yes,no,no,no,no,no,no,no,no,no,yes,yes,seafood|pescatarian
+M040,Ginataang Gulay,Vegetables in coconut milk,main,Vegetables,220,6,18,14,1 serving,Philippine Food Database,no,no,no,no,no,no,no,yes,no,no,no,yes,yes,no,yes,no,yes,vegetarian|no-meat
+M041,Tortang Talong,Eggplant omelet,main,Vegetables,180,10,12,10,1 serving,Philippine Food Database,no,no,no,no,no,no,yes,no,no,no,no,yes,no,no,yes,no,yes,egg|vegetarian|no-meat
+M042,Ginisang Ampalaya,Sauteed bitter gourd,main,Vegetables,120,5,10,7,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,yes,yes,vegetarian|vegan|no-meat
+M043,Adobong Kangkong,Water spinach adobo,main,Vegetables,100,3,8,6,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,yes,yes,vegetarian|vegan|no-meat
+M044,Chicharon Bulaklak,Deep fried intestinal lining,main,Meat & Poultry,380,12,5,35,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,yes,no-meat
+M045,Paksiw na Baboy,Pork in vinegar,main,Meat & Poultry,420,32,15,28,1 serving,Philippine Food Database,yes,no,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,pork
+M046,Sinigang na Hipon,Shrimp in sour soup,main,Fish & Seafood,180,18,15,6,1 serving,Philippine Food Database,no,no,no,yes,no,yes,no,no,no,no,no,no,no,no,yes,yes,yes,seafood|pescatarian
+M047,Ginataang Alimasag,Crab in coconut milk,main,Fish & Seafood,280,22,12,16,1 serving,Philippine Food Database,no,no,no,yes,no,yes,no,yes,no,no,no,no,no,no,yes,no,yes,seafood|pescatarian
+M048,Inihaw na Pusit,Grilled squid,main,Fish & Seafood,220,28,8,8,1 serving,Philippine Food Database,no,no,no,yes,no,yes,no,no,no,no,no,no,no,yes,yes,yes,yes,seafood|pescatarian
+M049,Inihaw na Liempo,Grilled pork belly,main,Meat & Poultry,480,28,3,38,1 serving,Philippine Food Database,yes,no,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,pork
+M050,Fried Chicken,Pritong manok,main,Meat & Poultry,420,35,15,25,1 serving,Philippine Food Database,no,no,yes,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,chicken
+M051,Sweet and Sour Pork,Filipino style,main,Mixed Dishes & Prepared Foods,480,28,42,22,1 serving,Philippine Food Database,yes,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,no,no,pork
+M052,Tuyong Pusit,Dried squid,main,Fish & Seafood,180,22,8,7,1 serving,Philippine Food Database,no,no,no,yes,no,yes,no,no,no,no,no,no,no,no,yes,yes,yes,seafood|pescatarian
+M053,Chicharong Baboy,Pork cracklings,main,Meat & Poultry,520,28,5,42,1 serving,Philippine Food Database,yes,no,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,pork
+M054,Empanada,Fried meat pie,main,Mixed Dishes & Prepared Foods,320,12,35,15,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,yes,no,no,no,no,no,no,no,no-meat
+M055,Pancit Malabon,Thick noodles with seafood,main,Mixed Dishes & Prepared Foods,380,18,52,12,1 serving,Philippine Food Database,no,no,no,yes,no,no,no,no,no,yes,no,no,no,no,no,no,no,seafood|pescatarian
+M056,Pancit Luglog,Noodles with thick sauce,main,Mixed Dishes & Prepared Foods,350,15,55,10,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,yes,no,no,no,no,no,no,no,no-meat
+M057,Sotanghon Guisado,Sauteed glass noodles,main,Mixed Dishes & Prepared Foods,280,12,42,8,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,yes,no,no,no,no,no,yes,no,no-meat
+M058,Lomi,Thick egg noodle soup,main,Mixed Dishes & Prepared Foods,380,18,48,14,1 serving,Philippine Food Database,no,no,no,no,no,no,yes,no,no,yes,no,no,no,no,no,no,no,egg|no-meat
+M059,Mami,Filipino noodle soup,main,Mixed Dishes & Prepared Foods,320,15,45,10,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,yes,no,no,no,no,no,no,no,no-meat
+M060,Batchoy,Noodle soup with pork,main,Mixed Dishes & Prepared Foods,420,22,48,16,1 serving,Philippine Food Database,yes,no,no,no,no,no,no,no,no,yes,no,no,no,no,no,no,no,pork
+M061,Bulalo,Beef shank soup,main,Mixed Dishes & Prepared Foods,380,28,18,22,1 serving,Philippine Food Database,no,yes,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,beef
+M062,Nilagang Baka,Boiled beef with vegetables,main,Mixed Dishes & Prepared Foods,320,25,22,15,1 serving,Philippine Food Database,no,yes,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,beef
+M063,Pochero,Beef and vegetable stew,main,Mixed Dishes & Prepared Foods,380,28,32,16,1 serving,Philippine Food Database,no,yes,no,no,no,no,no,no,no,no,no,no,no,yes,no,no,no,beef
+M064,Kalderetang Kambing,Goat stew,main,Meat & Poultry,480,32,28,28,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,no,no,no-meat
+M065,Papaitan,Bitter goat soup,main,Meat & Poultry,280,22,12,16,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,yes,no-meat
+M066,Pinapaitan,Bitter innards soup,main,Meat & Poultry,260,20,10,15,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,yes,no-meat
+M067,Bopis,Spicy pork lungs and heart,main,Meat & Poultry,320,24,15,20,1 serving,Philippine Food Database,yes,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,yes,pork
+M068,Pinakbet,,main,Mixed Dishes & Prepared Foods,163,5,20,7,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,no,yes,yes,vegetarian|vegan|no-meat
+M069,Chicken Tinola,,main,Mixed Dishes & Prepared Foods,230,30,5,10,1 serving,UlamCal,no,no,yes,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,chicken
+M070,Ginisang Ampalaya,,main,Mixed Dishes & Prepared Foods,215,10,10,15,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,no,yes,vegetarian|vegan|no-meat
+M071,Sinigang na Isda,,main,Mixed Dishes & Prepared Foods,185,25,10,5,1 serving,UlamCal,no,no,no,no,yes,no,no,no,no,no,no,no,no,no,yes,yes,yes,no-meat
+M072,Chicken Adobo,,main,Mixed Dishes & Prepared Foods,295,30,10,15,1 serving,UlamCal,no,no,yes,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,chicken
+M073,Pork Adobo,,main,Mixed Dishes & Prepared Foods,320,25,10,20,1 serving,UlamCal,yes,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,yes,pork
+M074,Balut,,main,Mixed Dishes & Prepared Foods,164,13,1,12,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,yes,no-meat
+M075,Hard Boiled Egg,,main,Mixed Dishes & Prepared Foods,73,6,1,5,1 serving,UlamCal,no,no,no,no,no,no,yes,no,no,no,no,no,no,no,yes,yes,yes,egg|no-meat
+M076,Soft Boiled Egg,,main,Mixed Dishes & Prepared Foods,73,6,1,5,1 serving,UlamCal,no,no,no,no,no,no,yes,no,no,no,no,no,no,no,yes,yes,yes,egg|no-meat
+M077,Sunny side up,,main,Mixed Dishes & Prepared Foods,91,6,1,7,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,yes,yes,no-meat
+M078,Scrambled egg,,main,Mixed Dishes & Prepared Foods,95,7,1,7,1 serving,UlamCal,no,no,no,no,no,no,yes,no,no,no,no,no,no,no,yes,yes,yes,egg|no-meat
+M079,Kare-Kare,,main,Mixed Dishes & Prepared Foods,385,20,20,25,1 serving,UlamCal,no,yes,no,no,no,no,no,no,yes,no,no,no,no,no,no,no,yes,beef
+M080,Pork Sinigang,,main,Mixed Dishes & Prepared Foods,295,25,15,15,1 serving,UlamCal,yes,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,yes,pork
+M081,Sinigang na Kangkong,,main,Mixed Dishes & Prepared Foods,145,5,20,5,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,no,yes,yes,vegetarian|vegan|no-meat
+M082,Sinigang na Bangus,,main,Mixed Dishes & Prepared Foods,250,30,10,10,1 serving,UlamCal,no,no,no,yes,yes,no,no,no,no,no,no,no,no,yes,yes,no,yes,seafood|pescatarian
+M083,Sinigang na Baka,,main,Mixed Dishes & Prepared Foods,360,30,15,20,1 serving,UlamCal,no,yes,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,beef
+M084,Sinigang na Hipon,,main,Mixed Dishes & Prepared Foods,185,25,10,5,1 serving,UlamCal,no,no,no,yes,no,yes,no,no,no,no,no,no,no,no,yes,yes,yes,seafood|pescatarian
+M085,Lechon,,main,Mixed Dishes & Prepared Foods,520,30,10,40,1 serving,UlamCal,yes,no,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,pork
+M086,Lechon Kawali,,main,Mixed Dishes & Prepared Foods,410,25,10,30,1 serving,UlamCal,yes,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,yes,pork
+M087,Paksiw na Isda,,main,Mixed Dishes & Prepared Foods,275,25,10,15,1 serving,UlamCal,yes,no,no,no,yes,no,no,no,no,no,no,no,no,no,yes,no,yes,pork
+M088,Pork Tinola,,main,Mixed Dishes & Prepared Foods,295,30,10,15,1 serving,UlamCal,yes,no,yes,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,pork|chicken
+M089,Fried Chicken,,main,Mixed Dishes & Prepared Foods,405,30,15,25,1 serving,UlamCal,no,no,yes,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,chicken
+M090,Nilagang Baka,,main,Mixed Dishes & Prepared Foods,360,30,15,20,1 serving,UlamCal,no,yes,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,beef
+M091,Nilagang Manok,,main,Mixed Dishes & Prepared Foods,295,30,10,15,1 serving,UlamCal,no,yes,yes,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,beef|chicken
+M092,Nilagang Baboy,,main,Mixed Dishes & Prepared Foods,360,30,15,20,1 serving,UlamCal,yes,yes,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,pork|beef
+M093,Inihaw na Liempo,,main,Mixed Dishes & Prepared Foods,280,25,0,20,1 serving,UlamCal,yes,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,yes,pork
+M094,Pork Sisig,,main,Mixed Dishes & Prepared Foods,235,20,5,15,1 serving,UlamCal,yes,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,yes,pork
+M095,Banana cue,,main,Mixed Dishes & Prepared Foods,144,1,35,0,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,vegan|no-meat
+M096,Filipino Spaghetti,,main,Mixed Dishes & Prepared Foods,165,5,25,5,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,no-meat
+M097,Beef Papaitan,,main,Mixed Dishes & Prepared Foods,190,20,5,10,1 serving,UlamCal,no,yes,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,yes,beef
+M098,Pork Giniling,,main,Mixed Dishes & Prepared Foods,235,20,5,15,1 serving,UlamCal,yes,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,yes,pork
+M099,Lumpia Shanghai,,main,Mixed Dishes & Prepared Foods,275,15,20,15,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no-meat
+M100,Tortang Talong,,main,Mixed Dishes & Prepared Foods,170,10,10,10,1 serving,UlamCal,no,no,no,no,no,no,yes,no,no,no,no,yes,no,no,yes,no,yes,egg|vegetarian|no-meat
+M101,Sinaing na Tulingan,,main,Mixed Dishes & Prepared Foods,73,7,0,5,1 serving,UlamCal,no,no,no,yes,yes,no,no,no,no,no,no,no,no,no,yes,yes,yes,seafood|pescatarian
+M102,Ube,,main,Mixed Dishes & Prepared Foods,104,2,24,0,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,yes,vegan|no-meat
+M103,Filipino Chop Suey,,main,Mixed Dishes & Prepared Foods,284,23,12,16,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,yes,no-meat
+M104,Bicol Express,,main,Mixed Dishes & Prepared Foods,195,10,5,15,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,yes,no-meat
+M105,Laing,,main,Mixed Dishes & Prepared Foods,150,5,10,10,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,yes,no-meat
+M106,Adobong Pusit,,main,Mixed Dishes & Prepared Foods,145,20,5,5,1 serving,UlamCal,no,no,no,yes,no,yes,no,no,no,no,no,no,no,no,yes,yes,yes,seafood|pescatarian
+M107,Baked Macaroni,,main,Mixed Dishes & Prepared Foods,210,10,20,10,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no-meat
+M108,Pancit Canton,,main,Mixed Dishes & Prepared Foods,250,7,33,10,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,yes,no,no,no,no,no,no,no,no-meat
+M109,Ginataang Kalabasa at Sitaw,,main,Mixed Dishes & Prepared Foods,125,2,9,9,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,yes,yes,no-meat
+M110,Arroz Caldo,,main,Mixed Dishes & Prepared Foods,152,5,24,4,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no-meat
+M111,Bulalo,,main,Mixed Dishes & Prepared Foods,186,12,3,14,1 serving,UlamCal,no,yes,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,yes,beef
+M112,Ginisang Monggo,,main,Mixed Dishes & Prepared Foods,131,6,20,3,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no-meat
+M113,Lumpiang Sariwa,,main,Mixed Dishes & Prepared Foods,158,4,22,6,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no-meat
+M114,Paksiw na Lechon,,main,Mixed Dishes & Prepared Foods,230,12,5,18,1 serving,UlamCal,yes,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,yes,pork
+M115,Pancit Palabok,,main,Mixed Dishes & Prepared Foods,193,6,22,9,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,yes,no,no,no,no,no,yes,yes,no-meat
+M116,Inihaw na Bangus,,main,Mixed Dishes & Prepared Foods,144,25,2,4,1 serving,UlamCal,no,no,no,yes,yes,no,no,no,no,no,no,no,no,no,yes,yes,yes,seafood|pescatarian
+M117,Mechado,,main,Mixed Dishes & Prepared Foods,182,15,8,10,1 serving,UlamCal,no,yes,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,yes,beef
+M118,Caldereta,,main,Mixed Dishes & Prepared Foods,227,16,7,15,1 serving,UlamCal,no,yes,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,yes,beef
+M119,Menudo,,main,Mixed Dishes & Prepared Foods,160,12,10,8,1 serving,UlamCal,yes,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,yes,yes,pork
+M120,Dinuguan,,main,Mixed Dishes & Prepared Foods,184,14,5,12,1 serving,UlamCal,yes,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,yes,pork
+M121,Tortang Giniling,,main,Mixed Dishes & Prepared Foods,235,20,5,15,1 serving,UlamCal,no,no,no,no,no,no,yes,no,no,no,no,no,no,no,yes,no,yes,egg|no-meat
+M122,Pork Steak,,main,Mixed Dishes & Prepared Foods,222,18,6,14,1 serving,UlamCal,yes,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,yes,pork
+M123,Chicken Inasal,,main,Mixed Dishes & Prepared Foods,189,23,4,9,1 serving,UlamCal,no,no,yes,no,no,no,no,no,no,no,no,no,no,no,yes,yes,yes,chicken
+M124,Pancit Bihon,,main,Mixed Dishes & Prepared Foods,93,5,16,1,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,yes,no,no,no,no,yes,yes,yes,no-meat
+M125,Miki Bihon,,main,Mixed Dishes & Prepared Foods,153,7,20,5,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no-meat
+M126,Chami,,main,Mixed Dishes & Prepared Foods,212,10,25,8,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,no-meat
+M127,Pares,,main,Mixed Dishes & Prepared Foods,335,20,30,15,1 serving,UlamCal,no,yes,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,beef
+M128,Kikiam,,main,Mixed Dishes & Prepared Foods,162,6,30,2,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,no-meat
+M129,Squid Ball,,main,Mixed Dishes & Prepared Foods,99,9,9,3,1 serving,UlamCal,no,no,no,yes,no,yes,no,no,no,no,no,no,no,no,yes,yes,yes,seafood|pescatarian
+M130,Chicken Ball,,main,Mixed Dishes & Prepared Foods,212,10,25,8,1 serving,UlamCal,no,no,yes,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,chicken
+M131,Chicken Skin,,main,Mixed Dishes & Prepared Foods,480,30,0,40,1 serving,UlamCal,no,no,yes,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,chicken
+M132,French Fries,,main,Mixed Dishes & Prepared Foods,311,3,41,15,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no-meat
+M133,Hotdog,,main,Mixed Dishes & Prepared Foods,136,5,2,12,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,yes,no-meat
+M134,Footlong,,main,Mixed Dishes & Prepared Foods,340,10,30,20,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no-meat
+M135,Ginataang Kalabasa,Squash in coconut milk,main,Vegetables,180,4,22,9,1 serving,Philippine Food Database,no,no,no,no,no,no,no,yes,no,no,no,yes,yes,no,no,yes,yes,vegetarian|no-meat
+M136,Ginataang Sitaw at Kalabasa,String beans and squash in coconut milk,main,Vegetables,160,5,18,8,1 serving,Philippine Food Database,no,no,no,no,no,no,no,yes,no,no,no,yes,yes,no,yes,yes,yes,vegetarian|no-meat
+M137,Adobong Sitaw,String beans adobo,main,Vegetables,120,4,15,5,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,yes,yes,vegetarian|vegan|no-meat
+M138,Chopsuey (Vegetarian),Mixed vegetables stir fry,main,Vegetables,140,5,18,6,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,yes,yes,vegetarian|vegan|no-meat
+M139,Ginisang Monggo (No Meat),Mung bean stew vegetarian,main,Vegetables,180,8,28,4,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,no,yes,no,vegetarian|vegan|no-meat
+M140,Ginisang Repolyo,Sauteed cabbage,main,Vegetables,100,3,12,5,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,yes,yes,vegetarian|vegan|no-meat
+M141,Ginisang Sayote,Sauteed chayote,main,Vegetables,90,2,12,4,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,yes,yes,vegetarian|vegan|no-meat
+M142,Ensaladang Talong,Grilled eggplant salad,main,Vegetables,80,2,10,4,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,yes,yes,vegetarian|vegan|no-meat
+M143,Tokwa with Toyo,Fried tofu with soy sauce,main,Vegetables,160,12,8,10,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,yes,yes,yes,no,yes,no,yes,vegetarian|vegan|no-meat
+M144,Sisig Tofu,Crispy tofu sisig style,main,Vegetables,220,14,12,14,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,yes,yes,yes,no,yes,no,yes,vegetarian|vegan|no-meat
+M145,Pancit Canton (Vegetarian),Vegetarian noodles,main,Grains & Cereals,280,8,48,6,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,yes,no,yes,yes,no,no,yes,no,vegetarian|vegan|no-meat
+M146,Sinigang na Hipon,Shrimp sour soup,main,Fish & Seafood,220,22,18,8,1 serving,Philippine Food Database,no,no,no,yes,no,yes,no,no,no,no,no,no,no,no,yes,yes,yes,seafood|pescatarian
+M147,Sinigang na Isda,Fish sour soup,main,Fish & Seafood,200,24,16,6,1 serving,Philippine Food Database,no,no,no,yes,yes,no,no,no,no,no,no,no,no,no,yes,yes,yes,seafood|pescatarian
+M148,Ginataang Manok,Chicken in coconut milk,main,Meat & Poultry,380,32,12,24,1 serving,Philippine Food Database,no,no,yes,no,no,no,no,yes,no,no,no,no,no,yes,yes,no,yes,chicken
+M149,Pininyahang Manok,Chicken with pineapple,main,Meat & Poultry,340,30,22,16,1 serving,Philippine Food Database,no,no,yes,no,no,no,no,no,no,no,no,no,no,yes,no,no,yes,chicken
+M150,Beef Tapa with Rice,Tapsilog without egg,main,Meat & Poultry,450,32,48,16,1 serving,Philippine Food Database,no,yes,no,no,no,no,no,no,no,no,no,no,no,yes,no,no,no,beef
+M151,Chicken Curry,Filipino style chicken curry,main,Meat & Poultry,380,34,18,20,1 serving,Philippine Food Database,no,no,yes,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,chicken
+M152,Beef Steak Tagalog,Bistek Tagalog,main,Meat & Poultry,420,36,15,24,1 serving,Philippine Food Database,no,yes,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,beef
+M153,Ginataang Hipon,Shrimp in coconut milk,main,Fish & Seafood,320,26,12,20,1 serving,Philippine Food Database,no,no,no,yes,no,yes,no,yes,no,no,no,no,no,yes,yes,no,yes,seafood|pescatarian
+M154,Sweet and Sour Fish,Escabecheng Isda,main,Fish & Seafood,360,32,28,14,1 serving,Philippine Food Database,no,no,no,yes,yes,no,no,no,no,no,no,no,no,yes,no,no,no,seafood|pescatarian
+M155,Bicol Express (Chicken),Spicy chicken in coconut,main,Meat & Poultry,420,30,8,32,1 serving,Philippine Food Database,no,no,yes,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,chicken
+M156,Pork Humba,Sweet braised pork,main,Meat & Poultry,480,32,22,30,1 serving,Philippine Food Database,yes,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,no,yes,pork
+M157,Pork Asado,Sweet pork roast,main,Meat & Poultry,460,34,18,28,1 serving,Philippine Food Database,yes,no,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,pork
+M158,Pork Hamonado,Pork in pineapple sauce,main,Meat & Poultry,440,32,24,26,1 serving,Philippine Food Database,yes,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,no,yes,pork
+M159,Ginataang Talong,Eggplant in coconut milk,main,Vegetables,160,4,18,9,1 serving,Philippine Food Database,no,no,no,no,no,no,no,yes,no,no,no,yes,yes,no,yes,yes,yes,vegetarian|no-meat
+M160,Utan Bisaya,Visayan vegetable soup,main,Vegetables,100,3,18,2,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,yes,yes,vegetarian|vegan|no-meat
+M161,Laing (No Meat),Taro leaves in coconut milk,main,Vegetables,180,5,15,12,1 serving,Philippine Food Database,no,no,no,no,no,no,no,yes,no,no,no,yes,yes,no,yes,no,yes,vegetarian|no-meat
+M162,Ginataang Labong,Bamboo shoots in coconut,main,Vegetables,140,4,16,7,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,yes,yes,vegetarian|vegan|no-meat
+M163,Embutido,Filipino meatloaf,main,Meat & Poultry,320,22,18,18,1 serving,Philippine Food Database,yes,no,no,no,no,no,yes,no,no,no,no,no,no,no,yes,no,yes,pork|egg
+M164,Morcon,Beef roll,main,Meat & Poultry,480,36,12,32,1 serving,Philippine Food Database,no,yes,no,no,no,no,yes,no,no,no,no,no,no,yes,yes,no,yes,beef|egg
+M165,Igado,Pork and liver stir fry,main,Meat & Poultry,380,28,15,24,1 serving,Philippine Food Database,yes,no,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,pork
+M166,Kinilaw na Isda,Filipino fish ceviche,main,Fish & Seafood,180,28,8,4,1 serving,Philippine Food Database,no,no,no,yes,yes,no,no,no,no,no,no,no,no,yes,yes,yes,yes,seafood|pescatarian
+M167,Pata Tim,Braised pork leg,main,Meat & Poultry,520,32,24,34,1 serving,Philippine Food Database,yes,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,no,yes,pork
+M168,Lengua,Ox tongue in sauce,main,Meat & Poultry,420,32,18,26,1 serving,Philippine Food Database,no,yes,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,beef
+M169,Bagnet,Ilocano crispy pork belly,main,Meat & Poultry,580,28,5,48,1 serving,Philippine Food Database,yes,no,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,pork
+M170,Beef Salpicao,Garlic beef cubes,main,Meat & Poultry,420,38,8,26,1 serving,Philippine Food Database,no,yes,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,beef
+M171,Balbacua,Beef skin stew,main,Meat & Poultry,380,26,18,24,1 serving,Philippine Food Database,no,yes,no,no,no,no,no,no,yes,no,no,no,no,yes,yes,no,yes,beef|nuts
+M172,Kansi,Ilonggo sour beef soup,main,Meat & Poultry,320,28,22,14,1 serving,Philippine Food Database,no,yes,no,no,no,no,no,no,no,no,no,no,no,yes,no,no,yes,beef
+M173,Laswa,Vegetable soup Ilonggo,main,Vegetables,100,3,18,2,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,yes,yes,vegetarian|vegan|no-meat
+M174,Pancit Habhab,Lucban noodles,main,Grains & Cereals,320,12,52,8,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,yes,no,yes,yes,no,no,yes,no,vegan|vegetarian|no-meat
+M175,Pancit Batil Patung,Tuguegarao noodles,main,Grains & Cereals,420,18,55,14,1 serving,Philippine Food Database,no,yes,no,no,no,no,yes,no,no,yes,no,no,no,no,no,no,no,beef|egg
+M176,Dinakdakan,Ilocano sisig with brain,main,Meat & Poultry,420,26,8,32,1 serving,Philippine Food Database,yes,no,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,pork
+M177,Callos,Ox tripe stew,main,Meat & Poultry,380,24,22,22,1 serving,Philippine Food Database,no,yes,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,beef
+M178,Paklay,Goat innards soup,main,Meat & Poultry,280,22,12,16,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,yes,goat
+M179,Pinakurat,Visayan spicy fish,main,Fish & Seafood,240,28,12,10,1 serving,Philippine Food Database,no,no,no,yes,yes,no,no,no,no,no,no,no,no,yes,yes,no,yes,seafood|pescatarian
+M180,Sinuglaw,Grilled pork and fish ceviche,main,Mixed Dishes & Prepared Foods,320,28,8,20,1 serving,Philippine Food Database,yes,no,no,yes,yes,no,no,no,no,no,no,no,no,yes,yes,no,yes,pork|seafood
+M181,Kilawin na Kambing,Goat ceviche,main,Meat & Poultry,260,26,8,14,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,goat
+M182,Halaan Soup,Clam soup,main,Fish & Seafood,180,16,12,8,1 serving,Philippine Food Database,no,no,no,yes,no,yes,no,no,no,no,no,no,no,no,yes,yes,yes,seafood|pescatarian
+S001,Banana Cue,Deep fried banana with sugar,snack,Sweets & Desserts,280,2,62,4,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,vegan|no-meat
+S002,Turon,Fried banana spring roll,snack,Sweets & Desserts,320,3,58,8,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,vegan|no-meat
+S003,Puto,Steamed rice cake,snack,Sweets & Desserts,220,6,42,3,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,yes,no,no,no,no,no,yes,no,vegan|no-meat
+S004,Bibingka,Rice cake with cheese,snack,Sweets & Desserts,280,8,48,6,1 serving,Philippine Food Database,no,no,no,no,no,no,no,yes,no,yes,no,no,no,no,no,yes,no,no-meat
+S005,Ensaymada,Sweet bread with butter and sugar,snack,Sweets & Desserts,320,6,52,10,1 serving,Philippine Food Database,no,no,no,no,no,no,no,yes,no,yes,no,no,no,no,no,no,no,no-meat
+S006,Halo-Halo,Mixed dessert with ice,snack,Sweets & Desserts,380,8,72,8,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,no-meat
+S007,Kwek-Kwek,Battered quail eggs,snack,Sweets & Desserts,220,10,22,10,1 serving,Philippine Food Database,no,no,no,no,no,no,yes,no,no,no,no,no,no,no,no,no,yes,egg|no-meat
+S008,Isaw,Grilled chicken intestines,snack,Meat & Poultry,180,12,5,12,1 serving,Philippine Food Database,no,no,yes,no,no,no,no,no,no,no,no,no,no,no,yes,no,yes,chicken
+S009,Betamax,Grilled chicken blood,snack,Meat & Poultry,120,8,3,8,1 serving,Philippine Food Database,no,no,yes,no,no,no,no,no,no,no,no,no,no,no,yes,yes,yes,chicken
+S010,Fish Ball,Fried fish balls,snack,Fish & Seafood,150,8,18,5,1 serving,Philippine Food Database,no,no,no,yes,yes,no,no,no,no,no,no,no,no,no,yes,yes,yes,seafood|pescatarian
+S011,Squid Ball,Fried squid balls,snack,Fish & Seafood,140,9,16,5,1 serving,Philippine Food Database,no,no,no,yes,no,yes,no,no,no,no,no,no,no,no,yes,yes,yes,seafood|pescatarian
+S012,Kikiam,Fried meat roll,snack,Meat & Poultry,180,10,15,10,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,yes,no-meat
+S013,Siomai,Steamed dumplings,snack,Mixed Dishes & Prepared Foods,140,8,12,8,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,yes,yes,no-meat
+S014,Leche Flan,Caramel custard,snack,Sweets & Desserts,320,8,45,12,1 serving,Philippine Food Database,no,no,no,no,no,no,no,yes,no,no,no,no,no,no,no,no,no,no-meat
+S015,Ube Halaya,Purple yam jam,snack,Sweets & Desserts,280,4,58,5,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,vegan|no-meat
+S016,Cassava Cake,Kamoteng kahoy cake,snack,Sweets & Desserts,320,6,52,10,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,yes,no,no,no,no,no,no,no,vegan|no-meat
+S017,Kutsinta,Brown rice cake,snack,Sweets & Desserts,180,3,38,2,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,yes,no,no,no,no,no,yes,no,vegan|no-meat
+S018,Puto Bumbong,Purple rice cake,snack,Sweets & Desserts,220,4,45,3,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,yes,no,no,no,no,no,yes,no,vegan|no-meat
+S019,Suman,Sticky rice wrapped in banana leaf,snack,Sweets & Desserts,180,3,38,2,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,vegan|no-meat
+S020,Palitaw,Sweet rice patties,snack,Sweets & Desserts,160,2,32,3,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,vegan|no-meat
+S021,Biko,Sweet sticky rice,snack,Sweets & Desserts,280,4,52,7,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,vegan|no-meat
+S022,Pinaputok na Tilapia,Stuffed grilled tilapia,snack,Fish & Seafood,280,35,8,12,1 serving,Philippine Food Database,no,no,no,yes,yes,no,no,no,no,no,no,no,no,yes,yes,no,yes,seafood|pescatarian
+S023,Puto,,snack,Mixed Dishes & Prepared Foods,177,3,30,5,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,vegan|no-meat
+S024,Kutsinta,,snack,Mixed Dishes & Prepared Foods,177,3,30,5,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,vegan|no-meat
+S025,Pandesal,,snack,Mixed Dishes & Prepared Foods,306,8,55,6,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,yes,no,no,no,no,no,yes,no,no-meat
+S026,Puto Bumbong,,snack,Mixed Dishes & Prepared Foods,258,3,57,2,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,no,vegan|no-meat
+S027,Suman,,snack,Mixed Dishes & Prepared Foods,60,0,6,4,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,yes,yes,vegan|no-meat
+S028,Puto,,snack,Mixed Dishes & Prepared Foods,97,2,20,1,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,yes,vegan|no-meat
+S029,Puto Flan,,snack,Mixed Dishes & Prepared Foods,137,3,20,5,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,yes,vegan|no-meat
+S030,Taho,,snack,Mixed Dishes & Prepared Foods,137,8,15,5,1 serving,UlamCal,no,no,no,no,no,no,no,no,no,no,no,no,no,no,yes,yes,yes,no-meat
+S031,Pinaputok na Tilapia,,snack,Mixed Dishes & Prepared Foods,153,25,2,5,1 serving,UlamCal,no,no,no,yes,yes,no,no,no,no,no,no,no,no,no,yes,yes,yes,seafood|pescatarian
+S032,Tinolang Tahong,,snack,Mixed Dishes & Prepared Foods,95,12,5,3,1 serving,UlamCal,no,no,yes,yes,no,yes,no,no,no,no,no,no,no,no,yes,yes,yes,chicken|seafood
+S033,Atchara,Pickled green papaya,snack,Vegetables,60,1,14,0,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,yes,yes,vegetarian|vegan|no-meat
+S034,Lumpiang Gulay,Vegetable spring roll,snack,Vegetables,180,4,25,7,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,no,yes,no,vegetarian|vegan|no-meat
+S035,Peanut Brittle,Pastillas de mani,snack,Sweets & Desserts,180,6,22,8,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,yes,no,no,yes,yes,no,no,yes,yes,vegetarian|vegan|no-meat|nuts
+S036,Polvoron,Powdered milk candy,snack,Sweets & Desserts,160,3,24,6,1 serving,Philippine Food Database,no,no,no,no,no,no,no,yes,no,no,no,yes,no,no,no,yes,yes,vegetarian|no-meat
+S037,Pastillas de Leche,Milk candy,snack,Sweets & Desserts,140,4,26,3,1 serving,Philippine Food Database,no,no,no,no,no,no,no,yes,no,no,no,yes,no,no,no,yes,no,vegetarian|no-meat
+S038,Yema,Custard candy,snack,Sweets & Desserts,150,3,28,4,1 serving,Philippine Food Database,no,no,no,no,no,no,yes,no,no,no,no,yes,no,no,no,yes,no,egg|vegetarian|no-meat
+S039,Puto Cheese,Rice cake with cheese,snack,Sweets & Desserts,180,6,28,5,1 serving,Philippine Food Database,no,no,no,no,no,no,no,yes,no,yes,no,yes,no,no,no,yes,no,vegetarian|no-meat
+S040,Kakanin Combo,Mixed native cakes,snack,Sweets & Desserts,220,4,45,4,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,yes,no,yes,yes,no,no,yes,no,vegetarian|vegan|no-meat
+S041,Pichi-Pichi,Cassava jelly with coconut,snack,Sweets & Desserts,160,2,36,2,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,no,yes,no,vegetarian|vegan|no-meat
+S042,Banana Split (Filipino),Saging con hielo,snack,Sweets & Desserts,320,4,58,9,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,yes,no,no,no,yes,no,vegetarian|no-meat
+S043,Kamote Cue,Sweet potato fritters,snack,Sweets & Desserts,240,2,48,5,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,no,yes,no,vegan|vegetarian|no-meat
+S044,Maruya,Banana fritters,snack,Sweets & Desserts,220,3,42,5,1 serving,Philippine Food Database,no,no,no,no,no,no,yes,no,no,no,no,yes,no,no,no,yes,no,egg|vegetarian|no-meat
+S045,Espasol,Rice flour candy,snack,Sweets & Desserts,120,2,26,1,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,yes,no,yes,yes,no,no,yes,no,vegan|vegetarian|no-meat
+S046,Buchi,Sesame balls with mongo,snack,Sweets & Desserts,180,4,32,5,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,no,yes,no,vegan|vegetarian|no-meat
+S047,Hopiang Baboy,Mongo pastry,snack,Sweets & Desserts,200,6,35,5,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,no,yes,no,vegan|vegetarian|no-meat
+S048,Mamon,Filipino sponge cake,snack,Sweets & Desserts,160,4,28,4,1 serving,Philippine Food Database,no,no,no,no,no,no,yes,no,no,yes,no,yes,no,no,no,yes,no,egg|vegetarian|no-meat
+S049,Brazo de Mercedes,Meringue roll,snack,Sweets & Desserts,280,6,38,12,1 serving,Philippine Food Database,no,no,no,no,no,no,yes,no,no,no,no,yes,no,no,no,no,no,egg|vegetarian|no-meat
+S050,Sans Rival,Cashew cake,snack,Sweets & Desserts,340,6,36,20,1 serving,Philippine Food Database,no,no,no,no,no,no,yes,no,yes,yes,no,yes,no,no,no,no,no,egg|nuts|vegetarian|no-meat
+S051,Silvanas,Cashew meringue,snack,Sweets & Desserts,180,3,22,9,1 serving,Philippine Food Database,no,no,no,no,no,no,yes,no,yes,no,no,yes,no,no,no,yes,yes,egg|nuts|vegetarian|no-meat
+S052,Otap,Cebu puff pastry,snack,Sweets & Desserts,140,2,22,5,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,no,yes,yes,vegan|vegetarian|no-meat
+S053,Barquillos,Rolled wafer cookies,snack,Sweets & Desserts,120,2,20,4,1 serving,Philippine Food Database,no,no,no,no,no,no,yes,no,no,no,no,yes,no,no,no,yes,yes,egg|vegetarian|no-meat
+S054,Turon with Langka,Banana jackfruit roll,snack,Sweets & Desserts,280,3,52,7,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,no,yes,no,vegan|vegetarian|no-meat
+S055,Adidas,Grilled chicken feet,snack,Meat & Poultry,160,14,2,10,1 serving,Philippine Food Database,no,no,yes,no,no,no,no,no,no,no,no,no,no,no,yes,no,yes,chicken
+S056,Helmet,Grilled chicken head,snack,Meat & Poultry,120,10,1,8,1 serving,Philippine Food Database,no,no,yes,no,no,no,no,no,no,no,no,no,no,no,yes,yes,yes,chicken
+S057,Proven,Chicken proventriculus,snack,Meat & Poultry,100,12,2,5,1 serving,Philippine Food Database,no,no,yes,no,no,no,no,no,no,no,no,no,no,no,yes,yes,yes,chicken
+S058,Ginataang Mais,Corn in coconut milk,snack,Sweets & Desserts,220,4,38,7,1 serving,Philippine Food Database,no,no,no,no,no,no,no,yes,no,no,no,yes,yes,no,no,yes,no,vegetarian|no-meat
+S059,Mais con Yelo,Corn with milk and ice,snack,Sweets & Desserts,280,6,52,6,1 serving,Philippine Food Database,no,no,no,no,no,no,no,yes,no,no,no,yes,no,no,no,yes,no,vegetarian|no-meat
+S060,Sago Gulaman,Pearl and jelly drink,snack,Sweets & Desserts,180,1,45,0,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,no,yes,no,vegan|vegetarian|no-meat
+S061,Buko Juice,Young coconut juice,snack,Beverages,60,1,12,1,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,yes,yes,vegan|vegetarian|no-meat
+S062,Ice Candy,Frozen flavored ice,snack,Sweets & Desserts,80,1,20,0,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,no,yes,yes,vegan|vegetarian|no-meat
+S063,Binignit,Visayan ginataan,snack,Sweets & Desserts,280,4,52,7,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,no,yes,no,vegan|vegetarian|no-meat
+S064,Crinkles,Chocolate crinkle cookies,snack,Sweets & Desserts,120,2,18,5,1 serving,Philippine Food Database,no,no,no,no,no,no,yes,no,no,yes,no,yes,no,no,yes,yes,yes,egg|vegetarian|no-meat
+S065,Pianono,Custard roll cake,snack,Sweets & Desserts,240,5,32,10,1 serving,Philippine Food Database,no,no,no,no,no,no,yes,no,no,yes,no,yes,no,no,no,no,no,egg|vegetarian|no-meat
+S066,Mocha Roll,Coffee roll cake,snack,Sweets & Desserts,260,5,36,11,1 serving,Philippine Food Database,no,no,no,no,no,no,yes,no,no,yes,no,yes,no,no,no,no,no,egg|vegetarian|no-meat
+S067,Mango Float,Mango icebox cake,snack,Sweets & Desserts,320,4,42,15,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,yes,no,yes,no,no,no,no,no,vegetarian|no-meat
+S068,Bibingkang Malagkit,Sticky rice cake,snack,Sweets & Desserts,280,5,52,6,1 serving,Philippine Food Database,no,no,no,no,no,no,yes,no,no,yes,no,yes,no,no,no,yes,no,egg|vegetarian|no-meat
+S069,Kalamay,Sticky sweet delicacy,snack,Sweets & Desserts,220,3,48,3,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,no,yes,no,vegan|vegetarian|no-meat
+S070,Mango Shake,Fresh mango smoothie,snack,Beverages,240,4,48,4,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,yes,no,no,no,yes,no,vegetarian|no-meat
+S071,Tsokolate Eh,Thick hot chocolate,snack,Beverages,200,5,32,7,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,yes,no,no,no,yes,no,vegetarian|no-meat
+S072,Salabat,Ginger tea,snack,Beverages,40,0,10,0,1 serving,Philippine Food Database,no,no,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,yes,yes,vegan|vegetarian|no-meat
