@@ -9,7 +9,7 @@ AI-powered chatbot for personalized Filipino meal planning.
 - 🎯 ±5% calorie accuracy (industry standard)
 
 ## Live Demo
-[Try it here!](https://pullancu-dev.github.io/filipino-meal-planner-chatbot-nn/)
+**Try the Chatbot:** [https://pullancu-dev.github.io/filipino-meal-planner-chatbot-nn/]
 
 ## Technologies
 - Brain.js (Neural Networks)
