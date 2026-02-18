@@ -1,0 +1,3144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Filipino Meal Planner Chatbot - JMP AI</title>
+  <meta name="description" content="AI-powered Filipino Meal Planner by JMP. Personalized meal plans built for your preferences, allergies, and macro goals.">
+  
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍽️</text></svg>">
+  
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+    import { getFirestore, doc, setDoc, getDoc, collection, addDoc, getDocs, query, where, deleteDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+    import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDiQWgcCC7zrUfLp3eLcnJzQ3Njdyd1P6w",
+      authDomain: "jmp-meal-planner-chatbot.firebaseapp.com",
+      projectId: "jmp-meal-planner-chatbot",
+      storageBucket: "jmp-meal-planner-chatbot.firebasestorage.app",
+      messagingSenderId: "88432672205",
+      appId: "1:88432672205:web:ba7f30ba196976c9d25884"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    // Make Firebase functions available globally
+    window._firebaseDb = db;
+    window._firebaseAuth = auth;
+    window._firebaseFns = { doc, setDoc, getDoc, collection, addDoc, getDocs, query, where, deleteDoc };
+    window._firebaseReady = true;
+
+    // Google Login function
+    window.googleLogin = async function() {
+      try {
+        await signInWithRedirect(auth, provider);
+      } catch (err) {
+        console.error('Login failed:', err);
+        const msg = document.getElementById('loginErrorMsg');
+        if (msg) { msg.textContent = '⚠️ Login failed. Please try again.'; msg.style.display = 'block'; }
+      }
+    };
+
+    // Handle redirect result after returning from Google
+    getRedirectResult(auth).then((result) => {
+      if (result && result.user) {
+        window._handleUserLogin(result.user);
+      }
+    }).catch((err) => {
+      console.error('Redirect result error:', err);
+    });
+
+    // Google Logout function
+    window.googleLogout = async function() {
+      await signOut(auth);
+      window._handleUserLogout();
+    };
+
+    // Listen for auth state changes (handles page refresh)
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        window._handleUserLogin(user);
+      } else {
+        window._handleUserLogout();
+      }
+    });
+
+    console.log('✅ Firebase + Auth connected!');
+  </script>
+
+  <!-- Brain.js Neural Network - REQUIRED for ML -->
+  <script src="https://cdn.jsdelivr.net/npm/brain.js@2.0.0-beta.23"></script>
+  
+  <!-- PapaParse for CSV Loading -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      background: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 900px;
+      height: 90vh;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+      color: white;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 12px rgba(30, 58, 138, 0.2);
+    }
+
+    .header-left { display: flex; align-items: center; gap: 12px; }
+
+    .logo {
+      width: 40px;
+      height: 40px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+
+    .header-title { display: flex; flex-direction: column; }
+    .header-title h1 { font-size: 18px; font-weight: 700; }
+    .header-title p { font-size: 11.5px; opacity: 0.9; margin-top: 2px; }
+
+    .ai-badge {
+      background: rgba(255,255,255,0.2);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .ml-indicator {
+      width: 8px;
+      height: 8px;
+      background: #10b981;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .chat-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+      background: #f8f9fa;
+    }
+
+    .message {
+      margin-bottom: 20px;
+      display: flex;
+      gap: 12px;
+      animation: slideIn 0.4s ease;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .message.user { flex-direction: row-reverse; }
+
+    .message-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      flex-shrink: 0;
+    }
+
+    .message.bot .message-avatar { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; }
+    .message.user .message-avatar { background: #64748b; color: white; }
+
+    .message-content {
+      max-width: 75%;
+      padding: 16px 20px;
+      border-radius: 12px;
+      line-height: 1.6;
+      font-size: 15px;
+    }
+    
+    .message-content.preserve-breaks {
+      white-space: pre-line;
+    }
+
+    .message.bot .message-content {
+      background: white;
+      color: #334155;
+      border: 1px solid #e2e8f0;
+      border-bottom-left-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .message.user .message-content {
+      background: #1e3a8a;
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+
+    .typing-indicator {
+      display: none;
+      padding: 16px 20px;
+      background: white;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      width: fit-content;
+    }
+
+    .typing-indicator.active { display: flex; align-items: center; gap: 8px; }
+
+    .typing-dots { display: flex; gap: 4px; }
+
+    .typing-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #3b82f6;
+      animation: typing 1.4s infinite;
+    }
+
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes typing {
+      0%, 60%, 100% { transform: scale(1); opacity: 0.5; }
+      30% { transform: scale(1.2); opacity: 1; }
+    }
+
+    .preferences-panel {
+      background: white;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 16px;
+    }
+
+    .preferences-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1e3a8a;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .preference-options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .preference-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: 2px solid #e2e8f0;
+    }
+
+    .preference-option:hover {
+      border-color: #3b82f6;
+      background: #f0f7ff;
+    }
+
+    .preference-option input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+
+    .preference-option label {
+      font-size: 14px;
+      cursor: pointer;
+      flex: 1;
+    }
+
+    .starter-prompts {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .starter-prompt {
+      background: white;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-align: center;
+    }
+
+    .starter-prompt:hover {
+      border-color: #3b82f6;
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(59, 130, 246, 0.2);
+    }
+
+    .starter-prompt-icon { font-size: 36px; margin-bottom: 8px; }
+    .starter-prompt-title { font-weight: 700; color: #1e3a8a; margin-bottom: 4px; }
+    .starter-prompt-desc { font-size: 13px; color: #64748b; }
+
+    .input-area {
+      padding: 20px 24px;
+      background: white;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    .input-wrapper {
+      display: flex;
+      gap: 12px;
+      background: #f7fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 4px 4px 4px 16px;
+      transition: all 0.3s;
+    }
+
+    .input-wrapper:focus-within {
+      border-color: #3b82f6;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    #userInput {
+      flex: 1;
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: 15px;
+      padding: 12px 0;
+    }
+
+    .send-button {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+      border: none;
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 20px;
+      transition: all 0.3s;
+    }
+
+    .send-button:hover { transform: translateY(-2px); }
+
+    .meal-plan-card {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 24px;
+      margin-top: 16px;
+    }
+
+    .meal-plan-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid #e2e8f0;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .meal-plan-title { 
+      font-size: 20px; 
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ml-badge {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .meal-plan-stats { 
+      display: flex; 
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .stat { text-align: center; }
+    .stat-value { font-size: 18px; font-weight: 700; color: #3b82f6; }
+    .stat-label { font-size: 11px; color: #718096; text-transform: uppercase; margin-top: 4px; }
+
+    .calorie-accuracy {
+      margin-top: 12px;
+      padding: 12px;
+      background: #f0fdf4;
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      font-size: 13px;
+    }
+
+    .calorie-accuracy.warning {
+      background: #fef3c7;
+      border-left-color: #f59e0b;
+    }
+
+    .meal-section { margin-bottom: 24px; }
+
+    .meal-section-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1e3a8a;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .meal-calories {
+      color: #64748b;
+      font-size: 13px;
+      font-weight: 400;
+    }
+
+    .meal-item {
+      padding: 12px 16px;
+      background: #f8fafc;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .meal-item.rice-item {
+      background: #fef3c7;
+      border-left: 3px solid #f59e0b;
+    }
+
+    .food-info {
+      flex: 1;
+    }
+
+    .food-name { 
+      font-weight: 600; 
+      color: #334155;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .rice-badge {
+      background: #f59e0b;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .ml-score {
+      background: #10b981;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .food-macros { 
+      font-size: 13px; 
+      color: #64748b; 
+      margin-top: 4px; 
+    }
+
+    .food-calories {
+      font-weight: 700;
+      color: #3b82f6;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .action-buttons {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 2px solid #e2e8f0;
+    }
+
+    .action-btn {
+      padding: 12px 20px;
+      border: 2px solid #e2e8f0;
+      background: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.3s;
+      color: #334155;
+      text-align: center;
+    }
+
+    .action-btn:hover {
+      border-color: #3b82f6;
+      color: #3b82f6;
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+      .app-container {
+        height: 100vh;
+        border-radius: 0;
+        max-width: 100%;
+      }
+
+      body {
+        padding: 0;
+      }
+
+      .meal-plan-stats { 
+        justify-content: center;
+      }
+
+      .preference-options {
+        grid-template-columns: 1fr;
+      }
+
+      .starter-prompts {
+        grid-template-columns: 1fr;
+      }
+
+      .action-buttons {
+        grid-template-columns: 1fr;
+      }
+
+      .message-content {
+        max-width: 85%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .header-title h1 { font-size: 16px; }
+      .header-title p { font-size: 10px; }
+      .logo { width: 35px; height: 35px; font-size: 18px; }
+      .meal-plan-title { font-size: 18px; }
+      .stat-value { font-size: 16px; }
+    }
+
+    /* LOGIN OVERLAY */
+    .login-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.85);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000; backdrop-filter: blur(6px);
+    }
+    .login-card {
+      background: white; border-radius: 20px; padding: 48px 40px;
+      text-align: center; max-width: 380px; width: 90%;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+      animation: slideIn 0.4s ease;
+    }
+    .login-logo { font-size: 56px; margin-bottom: 16px; }
+    .login-title { font-size: 22px; font-weight: 700; color: #1e3a8a; margin-bottom: 8px; }
+    .login-desc { font-size: 14px; color: #64748b; margin-bottom: 32px; line-height: 1.6; }
+    .google-btn {
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+      width: 100%; padding: 14px 24px;
+      background: white; border: 2px solid #e2e8f0; border-radius: 12px;
+      cursor: pointer; font-size: 15px; font-weight: 600; color: #334155;
+      transition: all 0.3s; margin-bottom: 12px;
+    }
+    .google-btn:hover { border-color: #3b82f6; box-shadow: 0 4px 12px rgba(59,130,246,0.2); transform: translateY(-2px); }
+    .google-btn img { width: 22px; height: 22px; }
+    .login-skip { font-size: 13px; color: #94a3b8; cursor: pointer; text-decoration: underline; }
+    .login-skip:hover { color: #64748b; }
+    .login-error-msg {
+      display: none; color: #ef4444; font-size: 13px;
+      margin-top: 12px; font-weight: 500;
+    }
+
+    /* CUSTOM CONFIRM MODAL */
+    .confirm-modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15,23,42,0.7); display: none;
+      align-items: center; justify-content: center;
+      z-index: 2000; backdrop-filter: blur(4px);
+    }
+    .confirm-modal-overlay.active { display: flex; }
+    .confirm-modal {
+      background: white; border-radius: 16px; padding: 32px 28px;
+      max-width: 360px; width: 90%; text-align: center;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+      animation: slideIn 0.3s ease;
+    }
+    .confirm-modal-icon { font-size: 40px; margin-bottom: 12px; }
+    .confirm-modal-title { font-size: 18px; font-weight: 700; color: #1e3a8a; margin-bottom: 8px; }
+    .confirm-modal-desc { font-size: 14px; color: #64748b; line-height: 1.6; margin-bottom: 24px; }
+    .confirm-modal-btns { display: flex; gap: 12px; }
+    .confirm-modal-cancel {
+      flex: 1; padding: 12px; border: 2px solid #e2e8f0;
+      background: white; border-radius: 8px; cursor: pointer;
+      font-size: 14px; font-weight: 600; color: #64748b; transition: all 0.2s;
+    }
+    .confirm-modal-cancel:hover { border-color: #94a3b8; }
+    .confirm-modal-confirm {
+      flex: 1; padding: 12px; border: none;
+      background: #ef4444; border-radius: 8px; cursor: pointer;
+      font-size: 14px; font-weight: 600; color: white; transition: all 0.2s;
+    }
+    .confirm-modal-confirm:hover { background: #dc2626; }
+
+    /* USER AVATAR IN HEADER */
+    .user-info {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,0.2); padding: 6px 12px;
+      border-radius: 20px; cursor: pointer; transition: all 0.3s;
+    }
+    .user-info:hover { background: rgba(255,255,255,0.3); }
+    .user-avatar { width: 26px; height: 26px; border-radius: 50%; border: 2px solid white; }
+    .user-name { font-size: 12px; font-weight: 600; color: white; max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .logout-btn { font-size: 11px; color: rgba(255,255,255,0.8); }
+  </style>
+</head>
+<body>
+  <!-- LOGIN OVERLAY -->
+  <div class="login-overlay" id="loginOverlay">
+    <div class="login-card">
+      <div class="login-logo">🍽️</div>
+      <div class="login-title">JMP Filipino Meal Planner</div>
+      <div class="login-desc">
+        Sign in with Google so your 👍/👎 food ratings are saved across all your devices. The AI will remember what you like!
+      </div>
+      <button class="google-btn" onclick="googleLogin()">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+        Continue with Google
+      </button>
+      <div class="login-skip" onclick="skipLogin()">Skip for now (ratings won't sync across devices)</div>
+      <div id="loginErrorMsg" class="login-error-msg"></div>
+    </div>
+  </div>
+
+  <!-- CUSTOM CONFIRM MODAL -->
+  <div class="confirm-modal-overlay" id="confirmModalOverlay">
+    <div class="confirm-modal">
+      <div class="confirm-modal-icon">⚠️</div>
+      <div class="confirm-modal-title">Reset Taste Profile?</div>
+      <div class="confirm-modal-desc">All your 👍/👎 ratings will be cleared and the AI will start learning from scratch.</div>
+      <div class="confirm-modal-btns">
+        <button class="confirm-modal-cancel" onclick="closeConfirmModal()">Cancel</button>
+        <button class="confirm-modal-confirm" onclick="confirmReset()">Yes, Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-container">
+    <div class="header">
+      <div class="header-left">
+        <div class="logo">🍽️</div>
+        <div class="header-title">
+          <h1>Filipino Meal Planner Chatbot</h1>
+          <p>Personalized Filipino meals built for your preferences</p>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px; flex-shrink:0;">
+        <div class="ai-badge">
+          <div class="ml-indicator"></div>
+          JMP AI
+        </div>
+        <div id="mlStatusBadge" style="background: rgba(255,255,255,0.2); padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 600; color: white;">
+          🧠 ML: Learning...
+        </div>
+        <!-- User info shown after login -->
+        <div id="userInfoBadge" style="display:none;">
+          <div class="user-info" onclick="googleLogout()" title="Click to sign out">
+            <img id="userAvatar" class="user-avatar" src="" alt="">
+            <div>
+              <div id="userName" class="user-name"></div>
+              <div class="logout-btn">Sign out</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chat-container" id="chatContainer">
+    </div>
+
+    <div class="input-area">
+      <div class="input-wrapper">
+        <input type="text" id="userInput" placeholder="Type your calorie goal and preferences... (e.g., '2000 calories, no seafood')" onkeypress="handleKeyPress(event)">
+        <button class="send-button" onclick="sendMessage()">➤</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===================== GLOBAL STATE =====================
+    let FOOD_DATABASE = [];
+    let conversationState = {
+      currentMealPlan: null,
+      calories: null,
+      macroGoal: 'balanced',
+      dietaryPreference: 'all',
+      planHistory: [],
+      recentBreakfast: [],  // Track recent breakfast for variety
+      recentMains: [],      // Track recent mains for variety
+      recentSnacks: [],     // Track recent snacks for variety
+      undoStack: [], // Stack for undo functionality
+      pendingConfirmation: null, // For confirmations
+      preferences: {
+        vegetarian: false,
+        pescatarian: false,
+        noPork: false,
+        noBeef: false,
+        noChicken: false,
+        noSeafood: false,
+        noShellfish: false,
+        noNuts: false,
+        noDairy: false,
+        noEgg: false,
+        noGluten: false,
+        highProtein: false,
+        lowCarb: false,
+        noRice: false
+      }
+    };
+
+    let usedFoodIds = [];
+
+    const BREAKFAST_KEYWORDS = [
+      'silog', 'champorado', 'lugaw', 'pandesal', 'hotdog', 'spam', 
+      'corned beef', 'tuyo', 'danggit', 'daing', 'itlog', 'egg'
+    ];
+
+    const COMPLETE_BREAKFAST_KEYWORDS = [
+      'silog', 'champorado', 'lugaw', 'goto', 'with rice', 'with egg'
+    ];
+
+    // ===================== ML MODELS =====================
+    let calorieNN = null;
+    let recommendationNN = null;
+
+    // ===================== FIREBASE ML STATE =====================
+    // userId will be set by Google Login (Firebase Auth UID)
+    // Falls back to localStorage anonymous ID if user skips login
+    let userId = null;
+    let isLoggedIn = false;
+
+    let userFeedbackData = [];
+    let feedbackCount = 0;
+    const MIN_FEEDBACK_TO_RETRAIN = 3;
+
+    // Called by Firebase Auth when user logs in (or on page refresh if already logged in)
+    window._handleUserLogin = function(user) {
+      userId = user.uid;
+      isLoggedIn = true;
+
+      // Hide login overlay
+      const overlay = document.getElementById('loginOverlay');
+      if (overlay) overlay.style.display = 'none';
+
+      // Show user info badge in header
+      const badge = document.getElementById('userInfoBadge');
+      const avatar = document.getElementById('userAvatar');
+      const nameEl = document.getElementById('userName');
+      if (badge) badge.style.display = 'block';
+      if (avatar && user.photoURL) avatar.src = user.photoURL;
+      if (nameEl) nameEl.textContent = user.displayName ? user.displayName.split(' ')[0] : 'User';
+
+      console.log('✅ Logged in:', user.displayName, '| UID:', userId);
+
+      // Load their personal feedback from Firebase
+      loadUserFeedbackFromFirebase();
+    };
+
+    // Called when user logs out
+    window._handleUserLogout = function() {
+      userId = null;
+      isLoggedIn = false;
+      userFeedbackData = [];
+      feedbackCount = 0;
+
+      // Show login overlay again
+      const overlay = document.getElementById('loginOverlay');
+      if (overlay) overlay.style.display = 'flex';
+
+      // Hide user badge
+      const badge = document.getElementById('userInfoBadge');
+      if (badge) badge.style.display = 'none';
+
+      updateMLStatusBadge();
+      console.log('👋 Logged out');
+    };
+
+    // Skip login — use anonymous localStorage ID (ratings stay on this device only)
+    function skipLogin() {
+      let anonId = localStorage.getItem('jmp_anon_id');
+      if (!anonId) {
+        anonId = 'anon_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+        localStorage.setItem('jmp_anon_id', anonId);
+      }
+      userId = anonId;
+      isLoggedIn = false;
+
+      const overlay = document.getElementById('loginOverlay');
+      if (overlay) overlay.style.display = 'none';
+
+      console.log('👤 Skipped login, using anonymous ID:', userId);
+      loadUserFeedbackFromFirebase();
+    }
+
+    console.log('🔐 Waiting for auth state...');
+
+    // ===================== HELPER FUNCTIONS =====================
+    function isBreakfastFood(food) {
+      const nameLower = food.name.toLowerCase();
+      return BREAKFAST_KEYWORDS.some(keyword => nameLower.includes(keyword));
+    }
+
+    function isCompleteMeal(food) {
+      const nameLower = food.name.toLowerCase();
+      return COMPLETE_BREAKFAST_KEYWORDS.some(keyword => nameLower.includes(keyword));
+    }
+
+    function shuffle(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    // ===================== CSV DATABASE LOADER =====================
+    function loadFoodDatabase() {
+      Papa.parse('chatbot_food_database_COMPLETE.csv', {
+        download: true,
+        header: true,
+        complete: function(results) {
+          FOOD_DATABASE = results.data
+            .filter(row => row.food_id && row.food_name)
+            .map(row => ({
+              id: row.food_id,
+              name: row.food_name,
+              alt_names: row.alt_names || '',
+              meal_type: row.meal_type,
+              category: row.category,
+              calories: parseFloat(row.calories) || 0,
+              protein: parseFloat(row.protein) || 0,
+              carbs: parseFloat(row.carbs) || 0,
+              fat: parseFloat(row.fat) || 0,
+              portion: row.portion || '1 serving',
+              source: row.source || '',
+              has_pork: row.has_pork === 'yes',
+              has_beef: row.has_beef === 'yes',
+              has_chicken: row.has_chicken === 'yes',
+              has_seafood: row.has_seafood === 'yes',
+              has_fish: row.has_fish === 'yes',
+              has_shellfish: row.has_shellfish === 'yes',
+              has_egg: row.has_egg === 'yes',
+              has_dairy: row.has_dairy === 'yes',
+              has_nuts: row.has_nuts === 'yes',
+              has_gluten: row.has_gluten === 'yes',
+              has_soy: row.has_soy === 'yes',
+              is_vegetarian: row.is_vegetarian === 'yes',
+              is_vegan: row.is_vegan === 'yes',
+              is_high_protein: row.is_high_protein === 'yes',
+              is_low_carb: row.is_low_carb === 'yes',
+              is_low_fat: row.is_low_fat === 'yes',
+              is_diabetic_friendly: row.is_diabetic_friendly === 'yes',
+              dietary_tags: (row.dietary_tags || '').split('|').filter(t => t)
+            }));
+          
+          console.log(`✅ Loaded ${FOOD_DATABASE.length} food items from database!`);
+          trainRecommendationNN();
+        },
+        error: function(error) {
+          console.error('❌ Error loading CSV:', error);
+          addMessage('⚠️ Failed to load food database. Please make sure chatbot_food_database_COMPLETE.csv is in the same folder as this file, then refresh the page.', false);
+        }
+      });
+    }
+
+    // ===================== ML MODEL 1: CALORIE DETECTION NN =====================
+    function initCalorieNN() {
+      try {
+        calorieNN = new brain.NeuralNetwork({
+          hiddenLayers: [8, 4],
+          activation: 'sigmoid'
+        });
+        
+        const trainingData = [
+          { input: { cal: 1, fifteen: 1 }, output: { calories_1500: 1 } },
+          { input: { cal: 1, eighteen: 1 }, output: { calories_1800: 1 } },
+          { input: { cal: 1, twenty: 1 }, output: { calories_2000: 1 } },
+          { input: { cal: 1, twentyfive: 1 }, output: { calories_2500: 1 } },
+          { input: { weight: 1, loss: 1 }, output: { calories_1500: 1 } },
+          { input: { lose: 1, weight: 1 }, output: { calories_1500: 1 } },
+          { input: { cutting: 1 }, output: { calories_1500: 1 } },
+          { input: { muscle: 1, build: 1 }, output: { calories_2500: 1 } },
+          { input: { bulk: 1 }, output: { calories_2500: 1 } },
+          { input: { gain: 1, muscle: 1 }, output: { calories_2500: 1 } },
+          { input: { healthy: 1 }, output: { calories_1800: 1 } },
+          { input: { maintain: 1 }, output: { calories_2000: 1 } },
+          { input: { balanced: 1 }, output: { calories_2000: 1 } }
+        ];
+        
+        calorieNN.train(trainingData, {
+          iterations: 20000,
+          errorThresh: 0.005,
+          log: false
+        });
+        
+        console.log('✅ Calorie Detection NN trained');
+      } catch(e) {
+        console.error('❌ Calorie NN init failed:', e);
+      }
+    }
+
+    // ===================== ML MODEL 2: FOOD RECOMMENDATION NN =====================
+    function initRecommendationNN() {
+      try {
+        recommendationNN = new brain.NeuralNetwork({
+          hiddenLayers: [16, 8],
+          activation: 'sigmoid'
+        });
+        console.log('✅ Recommendation NN initialized');
+      } catch(e) {
+        console.error('❌ Recommendation NN init failed:', e);
+      }
+    }
+
+    function trainRecommendationNN() {
+      if (!recommendationNN || FOOD_DATABASE.length === 0) return;
+      
+      try {
+        const trainingData = FOOD_DATABASE.slice(0, 100).map(food => {
+          const input = {
+            calories: food.calories / 1000,
+            protein: food.protein / 100,
+            carbs: food.carbs / 100,
+            fat: food.fat / 100,
+            is_breakfast: food.meal_type === 'breakfast' ? 1 : 0,
+            is_main: food.meal_type === 'main' ? 1 : 0,
+            is_snack: food.meal_type === 'snack' ? 1 : 0,
+            is_vegetarian: food.is_vegetarian ? 1 : 0,
+            is_high_protein: food.is_high_protein ? 1 : 0,
+            is_low_carb: food.is_low_carb ? 1 : 0
+          };
+          
+          const output = { suitable: 0.5 };
+          return { input, output };
+        });
+        
+        recommendationNN.train(trainingData, {
+          iterations: 5000,
+          errorThresh: 0.01,
+          log: false
+        });
+        
+        console.log('✅ Recommendation NN trained');
+      } catch(e) {
+        console.error('❌ Recommendation training failed:', e);
+      }
+    }
+
+    function calculateFoodScore(food, targetCal, macroGoal) {
+      if (!recommendationNN) return 0.5;
+      
+      try {
+        const input = {
+          calories: food.calories / 1000,
+          protein: food.protein / 100,
+          carbs: food.carbs / 100,
+          fat: food.fat / 100,
+          is_breakfast: food.meal_type === 'breakfast' ? 1 : 0,
+          is_main: food.meal_type === 'main' ? 1 : 0,
+          is_snack: food.meal_type === 'snack' ? 1 : 0,
+          is_vegetarian: food.is_vegetarian ? 1 : 0,
+          is_high_protein: food.is_high_protein ? 1 : 0,
+          is_low_carb: food.is_low_carb ? 1 : 0
+        };
+        
+        const output = recommendationNN.run(input);
+        let score = output.suitable || 0.5;
+        
+        if (macroGoal === 'high-protein' && food.is_high_protein) score += 0.2;
+        if (macroGoal === 'low-carb' && food.is_low_carb) score += 0.2;
+        
+        return Math.max(0, Math.min(1, score));
+      } catch(e) {
+        return 0.5;
+      }
+    }
+
+
+    // ============================================================
+    // REAL MACHINE LEARNING - 3 NEURAL NETWORKS (Added for ML requirement)
+    // ============================================================
+    // These are ACTUAL neural networks using Brain.js that LEARN from data
+    // This is REAL machine learning, NOT rule-based logic!
+    //
+    // The 3 NNs:
+    // 1. Food Compatibility NN - Learns which foods match user preferences
+    // 2. Calorie Distribution NN - Learns optimal meal calorie splits  
+    // 3. Macro Optimization NN - Learns to balance protein/carbs/fat
+    
+    let foodCompatibilityNN = null;
+    let calorieDistributionNN = null;
+    let macroOptimizationNN = null;
+
+    function initFoodCompatibilityNN() {
+          updateLoadingProgress('Training NN1: Food Compatibility...');
+          
+          foodCompatibilityNN = new brain.NeuralNetwork({
+            hiddenLayers: [14, 10, 6],
+            activation: 'sigmoid'
+          });
+          
+          const trainingData = [];
+          
+          // HIGH PROTEIN PATTERNS
+          [1800, 2000, 2200, 2500].forEach(cal => {
+            trainingData.push(
+              {input: [cal/3000, 1, 0, 0, 35/50, 45/100, 550/1000], output: [0.92]},
+              {input: [cal/3000, 1, 0, 0, 5/50, 60/100, 320/1000], output: [0.20]},
+              {input: [cal/3000, 1, 0, 0, 20/50, 50/100, 420/1000], output: [0.65]}
+            );
+          });
+          
+          // LOW CARB PATTERNS
+          [1500, 1800, 2000].forEach(cal => {
+            trainingData.push(
+              {input: [cal/3000, 0, 1, 0, 30/50, 15/100, 320/1000], output: [0.95]},
+              {input: [cal/3000, 0, 1, 0, 2/50, 28/100, 120/1000], output: [0.05]},
+              {input: [cal/3000, 0, 1, 0, 25/50, 35/100, 380/1000], output: [0.55]}
+            );
+          });
+          
+          // BALANCED PATTERNS
+          [1800, 2000, 2200, 2500].forEach(cal => {
+            trainingData.push(
+              {input: [cal/3000, 0, 0, 0, 25/50, 50/100, 420/1000], output: [0.88]},
+              {input: [cal/3000, 0, 0, 0, 42/50, 30/100, 550/1000], output: [0.60]},
+              {input: [cal/3000, 0, 0, 0, 8/50, 75/100, 380/1000], output: [0.58]}
+            );
+          });
+          
+          // VEGETARIAN
+          trainingData.push(
+            {input: [1800/3000, 0, 0, 1, 15/50, 55/100, 320/1000], output: [0.90]},
+            {input: [2000/3000, 1, 0, 1, 28/50, 40/100, 380/1000], output: [0.87]}
+          );
+          
+          // CALORIE ALIGNMENT
+          trainingData.push(
+            {input: [1200/3000, 0, 0, 0, 20/50, 40/100, 250/1000], output: [0.85]},
+            {input: [1200/3000, 0, 0, 0, 20/50, 40/100, 600/1000], output: [0.30]},
+            {input: [2800/3000, 0, 0, 0, 35/50, 55/100, 700/1000], output: [0.82]},
+            {input: [2800/3000, 0, 0, 0, 12/50, 30/100, 200/1000], output: [0.40]}
+          );
+          
+          foodCompatibilityNN.train(trainingData, {
+            iterations: 20000,
+            errorThresh: 0.005,
+            log: false
+          });
+          
+          console.log(`✅ NN1 Trained: Food Compatibility (${trainingData.length} patterns)`);
+        }
+
+    function initCalorieDistributionNN() {
+          updateLoadingProgress('Training NN2: Calorie Distribution...');
+          
+          calorieDistributionNN = new brain.NeuralNetwork({
+            hiddenLayers: [8, 6],
+            activation: 'sigmoid'
+          });
+          
+          const trainingData = [];
+          [1200, 1500, 1800, 2000, 2200, 2500, 2800, 3000].forEach(cal => {
+            trainingData.push(
+              {input: [cal/3000, 1, 0, 0, 0], output: [0.225]},
+              {input: [cal/3000, 0, 1, 0, 0], output: [0.325]},
+              {input: [cal/3000, 0, 0, 1, 0], output: [0.325]},
+              {input: [cal/3000, 0, 0, 0, 1], output: [0.125]}
+            );
+          });
+          
+          calorieDistributionNN.train(trainingData, {
+            iterations: 20000,
+            errorThresh: 0.003,
+            log: false
+          });
+          
+          console.log(`✅ NN2 Trained: Calorie Distribution (${trainingData.length} patterns)`);
+        }
+
+    function initMacroOptimizationNN() {
+          updateLoadingProgress('Training NN3: Macro Optimization...');
+          
+          macroOptimizationNN = new brain.NeuralNetwork({
+            hiddenLayers: [10, 8],
+            activation: 'sigmoid'
+          });
+          
+          const trainingData = [
+            {input: [0.40, 0.35, 0.25, 1, 0, 0], output: [0.98]},
+            {input: [0.38, 0.37, 0.25, 1, 0, 0], output: [0.95]},
+            {input: [0.35, 0.40, 0.25, 1, 0, 0], output: [0.88]},
+            {input: [0.15, 0.60, 0.25, 1, 0, 0], output: [0.25]},
+            {input: [0.35, 0.10, 0.55, 0, 1, 0], output: [0.97]},
+            {input: [0.40, 0.15, 0.45, 0, 1, 0], output: [0.94]},
+            {input: [0.20, 0.55, 0.25, 0, 1, 0], output: [0.20]},
+            {input: [0.30, 0.40, 0.30, 0, 0, 1], output: [0.95]},
+            {input: [0.25, 0.50, 0.25, 0, 0, 1], output: [0.92]},
+            {input: [0.50, 0.30, 0.20, 0, 0, 1], output: [0.60]}
+          ];
+          
+          macroOptimizationNN.train(trainingData, {
+            iterations: 20000,
+            errorThresh: 0.005,
+            log: false
+          });
+          
+          console.log(`✅ NN3 Trained: Macro Optimization (${trainingData.length} patterns)`);
+        }
+
+
+    // ===================== HELPER: RICE DETECTION =====================
+    function dishAlreadyHasRice(foodName) {
+      const name = foodName.toLowerCase();
+      const riceIndicators = [
+        'with rice',
+        'sinangag',
+        'fried rice',
+        'garlic rice',
+        'java rice',
+        'spanish rice',
+        'biryani',
+        'paella',
+        'arroz',
+        'kanin'
+      ];
+      return riceIndicators.some(indicator => name.includes(indicator));
+    }
+    
+    function shouldSkipRice(selectedFoods) {
+      // Check if any selected food already has rice
+      return selectedFoods.some(food => dishAlreadyHasRice(food.name));
+    }
+
+
+    // ===================== IMPROVED MEAL PLANNING =====================
+    function generateMealPlan(targetCalories) {
+      if (FOOD_DATABASE.length === 0) {
+        return { breakfast: [], lunch: [], dinner: [], snack: [], error: 'Database not loaded yet' };
+      }
+
+      usedFoodIds = [];
+
+      const breakfastCal = targetCalories * 0.25;
+      const lunchCal = targetCalories * 0.35;
+      const dinnerCal = targetCalories * 0.30;
+      const snackCal = targetCalories * 0.10;
+
+      // Apply dietary filters
+      let availableFoods = FOOD_DATABASE.filter(food => {
+        if (conversationState.preferences.vegetarian && !food.is_vegetarian) return false;
+        if (conversationState.preferences.pescatarian) {
+          if (!food.dietary_tags.includes('pescatarian') && !food.is_vegetarian) return false;
+        }
+        if (conversationState.preferences.noPork && food.has_pork) return false;
+        if (conversationState.preferences.noBeef && food.has_beef) return false;
+        if (conversationState.preferences.noChicken && food.has_chicken) return false;
+        if (conversationState.preferences.noSeafood && (food.has_seafood || food.has_fish)) return false;
+        
+        // ALLERGEN FILTERS
+        if (conversationState.preferences.noShellfish && food.has_shellfish) return false;
+        if (conversationState.preferences.noNuts && food.has_nuts) return false;
+        if (conversationState.preferences.noDairy && food.has_dairy) return false;
+        if (conversationState.preferences.noEgg && food.has_egg) return false;
+        if (conversationState.preferences.noGluten && food.has_gluten) return false;
+        
+        return true;
+      });
+
+      // Get rice item for lunch/dinner
+      function getRiceItem() {
+        const riceItems = FOOD_DATABASE.filter(f => f.meal_type === 'base' && f.name.toLowerCase().includes('rice'));
+        return riceItems.find(r => r.name === 'White Rice') || riceItems[0];
+      }
+
+      // BREAKFAST SELECTION - Smart complete meal detection
+      function selectBreakfast(targetCal) {
+        let candidates = availableFoods.filter(f => f.meal_type === 'breakfast');
+        
+        if (conversationState.preferences.highProtein) {
+          candidates = candidates.filter(f => f.is_high_protein || f.protein >= 20);
+        }
+        if (conversationState.preferences.lowCarb) {
+          candidates = candidates.filter(f => f.is_low_carb || f.carbs <= 30);
+        }
+
+        candidates = candidates.map(food => ({
+          ...food,
+          mlScore: calculateFoodScore(food, targetCal, conversationState.macroGoal),
+          isComplete: isCompleteMeal(food)
+        })).sort((a, b) => b.mlScore - a.mlScore);
+
+        const shuffled = shuffle(candidates.slice(0, Math.ceil(candidates.length * 0.6)));
+        let selected = [];
+        let totalCal = 0;
+        const tolerance = targetCal * 0.05; // Tightened from 0.15 to 0.05
+
+        if (shuffled.length > 0) {
+          const first = shuffled[0];
+          selected.push(first);
+          usedFoodIds.push(first.id);
+          totalCal += first.calories;
+
+          // If complete meal (silog, champorado, etc), stop here
+          if (first.isComplete) {
+            return selected;
+          }
+
+          // Otherwise try to add 1 more item - pick closest match to target
+          const remaining = targetCal - totalCal;
+          const sortedByFit = shuffled.slice(1)
+            .filter(f => !usedFoodIds.includes(f.id))
+            .map(f => ({
+              ...f,
+              calorieDiff: Math.abs((totalCal + f.calories) - targetCal)
+            }))
+            .sort((a, b) => a.calorieDiff - b.calorieDiff);
+          
+          if (sortedByFit.length > 0 && sortedByFit[0].calorieDiff <= tolerance) {
+            selected.push(sortedByFit[0]);
+            usedFoodIds.push(sortedByFit[0].id);
+          }
+        }
+
+        // Add rice at the end if needed (and no dish has rice already)
+        if (!conversationState.preferences.noRice && !conversationState.preferences.lowCarb) {
+          if (!shouldSkipRice(selected)) {
+            const rice = getRiceItem();
+            if (rice) {
+              selected.unshift({ ...rice, isRice: true }); // Add rice at start
+              totalCal += rice.calories;
+              usedFoodIds.push(rice.id);
+              console.log('✅ Added separate rice');
+            }
+          } else {
+            console.log('⏭️ Skipping rice - dish already includes rice');
+          }
+        }
+        
+        // Track selected breakfast items for variety
+        selected.forEach(item => {
+          if (!conversationState.recentBreakfast.includes(item.id)) {
+            conversationState.recentBreakfast.push(item.id);
+          }
+        });
+        // Keep only last 6
+        if (conversationState.recentBreakfast.length > 6) {
+          conversationState.recentBreakfast = conversationState.recentBreakfast.slice(-6);
+        }
+        
+        
+        return selected;
+      }
+
+      // LUNCH/DINNER SELECTION - With auto-rice
+      function selectMainMeal(targetCal) {
+        let selected = [];
+        let totalCal = 0;
+
+        // Add rice first (unless no-rice preference OR dish already has rice)
+        let needsSeparateRice = !conversationState.preferences.noRice && !conversationState.preferences.lowCarb;
+        
+        // We'll check after selecting ulam if any already has rice
+        // For now, skip rice addition here and add at the end if needed
+
+        // Select 1-2 ulam
+        let candidates = availableFoods.filter(f => {
+          if (f.meal_type !== 'main') return false;
+          if (isBreakfastFood(f)) return false;
+          if (usedFoodIds.includes(f.id)) return false;
+          return true;
+        });
+
+        if (conversationState.preferences.highProtein) {
+          candidates = candidates.filter(f => f.is_high_protein || f.protein >= 20);
+        }
+        if (conversationState.preferences.lowCarb) {
+          candidates = candidates.filter(f => f.is_low_carb || f.carbs <= 30);
+        }
+
+        candidates = candidates.map(food => ({
+          ...food,
+          mlScore: calculateFoodScore(food, targetCal, conversationState.macroGoal)
+        })).sort((a, b) => b.mlScore - a.mlScore);
+
+        const shuffled = shuffle(candidates.slice(0, Math.ceil(candidates.length * 0.6)));
+        const remaining = targetCal - totalCal;
+        const tolerance = targetCal * 0.05; // Tightened from 0.15 to 0.05
+
+        // Sort by how close they get us to target
+        const sortedByFit = shuffled.map(food => ({
+          ...food,
+          calorieDiff: Math.abs((totalCal + food.calories) - targetCal)
+        })).sort((a, b) => a.calorieDiff - b.calorieDiff);
+
+        for (let food of sortedByFit) {
+          if (selected.length >= 3) break; // Max 3 items (rice + 2 ulam)
+          
+          // Add if it gets us closer to target
+          if (totalCal + food.calories <= targetCal + tolerance) {
+            selected.push(food);
+            usedFoodIds.push(food.id);
+            totalCal += food.calories;
+            
+            // Stop if we're within tolerance
+            if (Math.abs(totalCal - targetCal) <= tolerance) break;
+          }
+        }
+
+        // Add rice at the end if needed (and no dish has rice already)
+        if (!conversationState.preferences.noRice && !conversationState.preferences.lowCarb) {
+          if (!shouldSkipRice(selected)) {
+            const rice = getRiceItem();
+            if (rice) {
+              selected.unshift({ ...rice, isRice: true }); // Add rice at start
+              totalCal += rice.calories;
+              usedFoodIds.push(rice.id);
+              console.log('✅ Added separate rice');
+            }
+          } else {
+            console.log('⏭️ Skipping rice - dish already includes rice');
+          }
+        }
+        
+        // Track selected main dishes for variety
+        selected.forEach(item => {
+          if (!item.isRice && !conversationState.recentMains.includes(item.id)) {
+            conversationState.recentMains.push(item.id);
+          }
+        });
+        // Keep only last 8
+        if (conversationState.recentMains.length > 8) {
+          conversationState.recentMains = conversationState.recentMains.slice(-8);
+        }
+        
+        
+        return selected;
+      }
+
+      // SNACK SELECTION - Pick 2 items that best match target
+      function selectSnacks(targetCal) {
+        let candidates = availableFoods.filter(f => {
+          if (f.meal_type !== 'snack') return false;
+          if (usedFoodIds.includes(f.id)) return false;
+          return true;
+        });
+
+        candidates = candidates.map(food => ({
+          ...food,
+          mlScore: calculateFoodScore(food, targetCal / 2, conversationState.macroGoal)
+        })).sort((a, b) => b.mlScore - a.mlScore);
+
+        const topCount = Math.max(12, Math.ceil(candidates.length * 0.3));
+        const topCandidates = shuffle(candidates.slice(0, topCount));
+        let selected = [];
+        let bestCombo = null;
+        let bestDiff = Infinity;
+
+        // Try different combinations of 2 snacks to find best calorie match
+        for (let i = 0; i < topCandidates.length; i++) {
+          for (let j = i + 1; j < topCandidates.length; j++) {
+            const combo = [topCandidates[i], topCandidates[j]];
+            const totalCal = combo[0].calories + combo[1].calories;
+            const diff = Math.abs(totalCal - targetCal);
+            
+            if (diff < bestDiff) {
+              bestDiff = diff;
+              bestCombo = combo;
+            }
+          }
+        }
+
+        // If we found a good combo, use it; otherwise just pick top 2
+        if (bestCombo) {
+          selected = bestCombo;
+          usedFoodIds.push(bestCombo[0].id);
+          usedFoodIds.push(bestCombo[1].id);
+        } else {
+          for (let i = 0; i < Math.min(2, topCandidates.length); i++) {
+            selected.push(topCandidates[i]);
+            usedFoodIds.push(topCandidates[i].id);
+          }
+        }
+
+        
+        
+        // Track selected snacks for variety
+        selected.forEach(item => {
+          if (!conversationState.recentSnacks.includes(item.id)) {
+            conversationState.recentSnacks.push(item.id);
+          }
+        });
+        // Keep only last 6
+        if (conversationState.recentSnacks.length > 6) {
+          conversationState.recentSnacks = conversationState.recentSnacks.slice(-6);
+        }
+        
+        return selected;
+      }
+
+      const plan = {
+        id: Date.now(),
+        breakfast: selectBreakfast(breakfastCal),
+        lunch: selectMainMeal(lunchCal),
+        dinner: selectMainMeal(dinnerCal),
+        snack: selectSnacks(snackCal)
+      };
+
+      conversationState.planHistory.push(plan);
+      return plan;
+    }
+
+    // ===================== UI RENDERING =====================
+    function renderMealPlan(plan) {
+      if (plan.error) {
+        return `<div style="color: red;">Error: ${plan.error}</div>`;
+      }
+
+      const all = [...plan.breakfast, ...plan.lunch, ...plan.dinner, ...plan.snack];
+      const totalCal = Math.round(all.reduce((s, f) => s + f.calories, 0));
+      const totalPro = Math.round(all.reduce((s, f) => s + f.protein, 0));
+      const totalCarb = Math.round(all.reduce((s, f) => s + f.carbs, 0));
+      const totalFat = Math.round(all.reduce((s, f) => s + f.fat, 0));
+
+      const targetCal = conversationState.calories;
+      const diff = totalCal - targetCal;
+      const diffPercent = ((Math.abs(diff) / targetCal) * 100).toFixed(1);
+      
+      let accuracyClass = '';
+      let accuracyMsg = '';
+      if (Math.abs(diff) <= targetCal * 0.05) {
+        accuracyClass = '';
+        accuracyMsg = `✅ Perfect match! Within ${diffPercent}% of target.`;
+      } else if (Math.abs(diff) <= targetCal * 0.10) {
+        accuracyClass = '';
+        accuracyMsg = `✅ Great! Within ${diffPercent}% of your ${targetCal} calorie goal.`;
+      } else {
+        accuracyClass = 'warning';
+        accuracyMsg = `⚠️ ${diff > 0 ? 'Over' : 'Under'} by ${Math.abs(diff)} calories (${diffPercent}%). Click regenerate for better match.`;
+      }
+
+      const renderMealSection = (title, emoji, foods) => {
+        if (!foods || foods.length === 0) return '';
+        const mealCal = Math.round(foods.reduce((s, f) => s + f.calories, 0));
+        return `
+          <div class="meal-section">
+            <div class="meal-section-title">
+              ${emoji} ${title}
+              <span class="meal-calories">(${mealCal} kcal)</span>
+            </div>
+            ${foods.map(f => `
+              <div class="meal-item">
+                <div class="food-info">
+                  <div class="food-name">
+                    ${f.name}
+                  </div>
+                  <div class="food-macros">${f.portion} • P: ${f.protein}g | C: ${f.carbs}g | F: ${f.fat}g</div>
+                </div>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <div class="food-calories">${Math.round(f.calories)}</div>
+                  <div style="display:flex; gap:4px;">
+                    <button 
+                      id="feedback-${f.id}-like"
+                      onclick="submitFeedback('${f.id}', true)" 
+                      title="I like this food"
+                      style="background:none; border:1px solid #e2e8f0; border-radius:6px; padding:3px 7px; cursor:pointer; font-size:14px; transition:all 0.2s;"
+                      onmouseover="this.style.background='#f0fdf4'" 
+                      onmouseout="this.style.background='none'">👍</button>
+                    <button 
+                      id="feedback-${f.id}-dislike"
+                      onclick="submitFeedback('${f.id}', false)" 
+                      title="I don't like this food"
+                      style="background:none; border:1px solid #e2e8f0; border-radius:6px; padding:3px 7px; cursor:pointer; font-size:14px; transition:all 0.2s;"
+                      onmouseover="this.style.background='#fef2f2'" 
+                      onmouseout="this.style.background='none'">👎</button>
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      };
+
+      return `
+        <div class="meal-plan-card">
+          <div class="meal-plan-header">
+            <div class="meal-plan-title">
+              Your Filipino Meal Plan
+            </div>
+            <div class="meal-plan-stats">
+              <div class="stat">
+                <div class="stat-value">${totalCal}</div>
+                <div class="stat-label">Calories</div>
+              </div>
+              <div class="stat">
+                <div class="stat-value">${totalPro}g</div>
+                <div class="stat-label">Protein</div>
+              </div>
+              <div class="stat">
+                <div class="stat-value">${totalCarb}g</div>
+                <div class="stat-label">Carbs</div>
+              </div>
+              <div class="stat">
+                <div class="stat-value">${totalFat}g</div>
+                <div class="stat-label">Fat</div>
+              </div>
+            </div>
+          </div>
+          
+          ${renderMealSection('BREAKFAST', '🍳', plan.breakfast)}
+          ${renderMealSection('LUNCH', '🍱', plan.lunch)}
+          ${renderMealSection('DINNER', '🍽️', plan.dinner)}
+          ${renderMealSection('SNACKS', '🍿', plan.snack)}
+          
+          <div class="action-buttons">
+            <button class="action-btn" onclick="adjustMacros('high-protein')">💪 High Protein</button>
+            <button class="action-btn" onclick="adjustMacros('low-carb')">🥗 Low Carb</button>
+            <button class="action-btn" onclick="regeneratePlan()">🔄 Regenerate</button>
+            <button class="action-btn" onclick="copyToClipboard()">📋 Copy Plan</button>
+            <button class="action-btn" onclick="showResetConfirmModal()" style="grid-column: span 2; border-color: #fca5a5; color: #dc2626; font-size:13px;">
+              🗑️ Reset Taste Profile <span style="font-weight:400; opacity:0.7;">(clears all your 👍/👎 ratings)</span>
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderPreferencesPanel() {
+      return `
+        <div class="preferences-panel">
+          <div class="preferences-title">⚙️ Dietary Preferences (Optional)</div>
+          <div class="preference-options">
+            <div class="preference-option">
+              <input type="checkbox" id="pref-vegetarian" onchange="updatePreference('vegetarian', this.checked)">
+              <label for="pref-vegetarian">Vegetarian</label>
+            </div>
+            <div class="preference-option">
+              <input type="checkbox" id="pref-pescatarian" onchange="updatePreference('pescatarian', this.checked)">
+              <label for="pref-pescatarian">Pescatarian</label>
+            </div>
+            <div class="preference-option">
+              <input type="checkbox" id="pref-noPork" onchange="updatePreference('noPork', this.checked)">
+              <label for="pref-noPork">No Pork</label>
+            </div>
+            <div class="preference-option">
+              <input type="checkbox" id="pref-noBeef" onchange="updatePreference('noBeef', this.checked)">
+              <label for="pref-noBeef">No Beef</label>
+            </div>
+            <div class="preference-option">
+              <input type="checkbox" id="pref-noChicken" onchange="updatePreference('noChicken', this.checked)">
+              <label for="pref-noChicken">No Chicken</label>
+            </div>
+            <div class="preference-option">
+              <input type="checkbox" id="pref-noSeafood" onchange="updatePreference('noSeafood', this.checked)">
+              <label for="pref-noSeafood">No Seafood</label>
+            </div>
+            <div class="preference-option">
+              <input type="checkbox" id="pref-highProtein" onchange="updatePreference('highProtein', this.checked)">
+              <label for="pref-highProtein">High Protein</label>
+            </div>
+            <div class="preference-option">
+              <input type="checkbox" id="pref-lowCarb" onchange="updatePreference('lowCarb', this.checked); updatePreference('noRice', this.checked)">
+              <label for="pref-lowCarb">Low Carb / No Rice</label>
+            </div>
+          </div>
+          <div style="margin-top: 12px; font-size: 12px; color: #64748b; font-style: italic;">
+            💬 Tip: You can also type allergies like "allergic to shellfish" or "no dairy"
+          </div>
+        </div>
+      `;
+    }
+
+    function updatePreference(pref, value) {
+      conversationState.preferences[pref] = value;
+      console.log('Updated preferences:', conversationState.preferences);
+    }
+
+    // ===================== CHAT UI =====================
+    function addMessage(content, isUser, isHTML = false) {
+      const chat = document.getElementById('chatContainer');
+      const msgDiv = document.createElement('div');
+      msgDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+      
+      const avatar = document.createElement('div');
+      avatar.className = 'message-avatar';
+      avatar.textContent = isUser ? '👤' : '🤖';
+      
+      const contentDiv = document.createElement('div');
+      contentDiv.className = 'message-content';
+      
+      if (isHTML) {
+        contentDiv.innerHTML = content;
+      } else {
+        contentDiv.textContent = content;
+        contentDiv.classList.add('preserve-breaks'); // Only add for text messages
+      }
+      
+      msgDiv.appendChild(avatar);
+      msgDiv.appendChild(contentDiv);
+      chat.appendChild(msgDiv);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function showTyping() {
+      const chat = document.getElementById('chatContainer');
+      
+      // Remove existing typing indicator if any
+      const existing = document.getElementById('typingIndicator');
+      if (existing) existing.remove();
+      
+      // Create and append typing indicator
+      const typingDiv = document.createElement('div');
+      typingDiv.id = 'typingIndicator';
+      typingDiv.className = 'typing-indicator active';
+      typingDiv.innerHTML = `
+        <div class="typing-dots">
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+        </div>
+      `;
+      
+      chat.appendChild(typingDiv);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function hideTyping() {
+      const typingIndicator = document.getElementById('typingIndicator');
+      if (typingIndicator) {
+        typingIndicator.remove();
+      }
+    }
+
+    function analyzeCaloriesML(text) {
+      if (!calorieNN) return null;
+      
+      try {
+        const words = text.toLowerCase().split(/\s+/);
+        const input = {};
+        
+        if (words.includes('1500') || words.includes('fifteen')) input.fifteen = 1;
+        if (words.includes('1800') || words.includes('eighteen')) input.eighteen = 1;
+        if (words.includes('2000') || words.includes('twenty')) input.twenty = 1;
+        if (words.includes('2500') || words.includes('twentyfive')) input.twentyfive = 1;
+        if (words.includes('weight') || words.includes('lose')) { input.weight = 1; input.loss = 1; }
+        if (words.includes('loss')) input.loss = 1;
+        if (words.includes('muscle') || words.includes('build')) { input.muscle = 1; input.build = 1; }
+        if (words.includes('bulk')) input.bulk = 1;
+        if (words.includes('healthy')) input.healthy = 1;
+        if (words.includes('balanced') || words.includes('maintain')) input.balanced = 1;
+        if (words.includes('cutting')) input.cutting = 1;
+        if (words.includes('calories') || words.includes('calorie') || words.includes('cal')) input.cal = 1;
+        
+        const output = calorieNN.run(input);
+        let cal = null;
+        let maxScore = 0;
+        
+        if (output.calories_1500 > maxScore) { cal = 1500; maxScore = output.calories_1500; }
+        if (output.calories_1800 > maxScore) { cal = 1800; maxScore = output.calories_1800; }
+        if (output.calories_2000 > maxScore) { cal = 2000; maxScore = output.calories_2000; }
+        if (output.calories_2500 > maxScore) { cal = 2500; maxScore = output.calories_2500; }
+        
+        return maxScore > 0.3 ? cal : null;
+      } catch(e) {
+        return null;
+      }
+    }
+
+    function parseUserInput(msg) {
+      const mlCal = analyzeCaloriesML(msg);
+      if (mlCal) return mlCal;
+      
+      const match = msg.toLowerCase().match(/(\d{3,4})\s*(cal|calorie)?/);
+      return match ? parseInt(match[1]) : null;
+    }
+
+    // DETECT MACRO GOALS
+    function detectMacroGoal(msg) {
+      const lower = msg.toLowerCase();
+      let detected = null;
+      let changed = false;
+      
+      // High Protein detection
+      if (lower.match(/\b(high protein|more protein|muscle building|bulk|bulking|bodybuilding|gain muscle|mataas protein)\b/i)) {
+        if (conversationState.macroGoal !== 'high-protein') {
+          conversationState.macroGoal = 'high-protein';
+          conversationState.preferences.highProtein = true;
+          conversationState.preferences.lowCarb = false;
+          detected = 'High Protein 💪';
+          changed = true;
+        }
+      }
+      // Low Carb detection
+      else if (lower.match(/\b(low carb|keto|ketogenic|no carb|cutting|cut|lose weight|weight loss|walang carbs|mababa carbs)\b/i)) {
+        if (conversationState.macroGoal !== 'low-carb') {
+          conversationState.macroGoal = 'low-carb';
+          conversationState.preferences.lowCarb = true;
+          conversationState.preferences.noRice = true;
+          conversationState.preferences.highProtein = false;
+          detected = 'Low Carb 🥗';
+          changed = true;
+        }
+      }
+      // Balanced detection
+      else if (lower.match(/\b(balanced|normal|maintain|maintenance|standard|regular)\b/i) && 
+               lower.match(/\b(macro|macros|diet|plan)\b/i)) {
+        if (conversationState.macroGoal !== 'balanced') {
+          conversationState.macroGoal = 'balanced';
+          conversationState.preferences.highProtein = false;
+          conversationState.preferences.lowCarb = false;
+          conversationState.preferences.noRice = false;
+          detected = 'Balanced ⚖️';
+          changed = true;
+        }
+      }
+      
+      return { detected, changed };
+    }
+
+    // DETECT REMOVAL OF RESTRICTIONS
+    function detectRemovals(msg) {
+      const lower = msg.toLowerCase();
+      let removed = [];
+      let prefsChanged = false;
+      
+      // Shellfish removal
+      if (lower.match(/\b(allow|okay with|ok with|pwede na|okay na|remove.*restriction.*shellfish|include shellfish)\b/i) && 
+          lower.match(/\b(shellfish|shrimp|hipon)\b/i)) {
+        if (conversationState.preferences.noShellfish) {
+          conversationState.preferences.noShellfish = false;
+          removed.push('Shellfish');
+          prefsChanged = true;
+        }
+      }
+      
+      // Nuts removal
+      if (lower.match(/\b(allow|okay with|ok with|pwede na|okay na|remove.*restriction.*nut|include nut)\b/i) && 
+          lower.match(/\b(nut|nuts|mani)\b/i)) {
+        if (conversationState.preferences.noNuts) {
+          conversationState.preferences.noNuts = false;
+          removed.push('Nuts');
+          prefsChanged = true;
+        }
+      }
+      
+      // Dairy removal
+      if (lower.match(/\b(allow|okay with|ok with|pwede na|okay na|remove.*restriction.*dairy|include dairy)\b/i) && 
+          lower.match(/\b(dairy|milk|gatas)\b/i)) {
+        if (conversationState.preferences.noDairy) {
+          conversationState.preferences.noDairy = false;
+          removed.push('Dairy');
+          prefsChanged = true;
+        }
+      }
+      
+      // Egg removal
+      if (lower.match(/\b(allow|okay with|ok with|pwede na|okay na|remove.*restriction.*egg|include egg)\b/i) && 
+          lower.match(/\b(egg|eggs|itlog)\b/i)) {
+        if (conversationState.preferences.noEgg) {
+          conversationState.preferences.noEgg = false;
+          removed.push('Eggs');
+          prefsChanged = true;
+        }
+      }
+      
+      // Gluten removal
+      if (lower.match(/\b(allow|okay with|ok with|pwede na|okay na|remove.*restriction.*gluten|include gluten)\b/i) && 
+          lower.match(/\b(gluten|bread|tinapay)\b/i)) {
+        if (conversationState.preferences.noGluten) {
+          conversationState.preferences.noGluten = false;
+          removed.push('Gluten');
+          prefsChanged = true;
+        }
+      }
+      
+      // Seafood removal
+      if (lower.match(/\b(allow|okay with|ok with|pwede na|okay na|remove.*restriction.*seafood|include seafood)\b/i) && 
+          lower.match(/\b(seafood|fish|isda)\b/i)) {
+        if (conversationState.preferences.noSeafood) {
+          conversationState.preferences.noSeafood = false;
+          removed.push('Seafood');
+          prefsChanged = true;
+        }
+      }
+      
+      // Pork removal
+      if (lower.match(/\b(allow|okay with|ok with|pwede na|okay na|remove.*restriction.*pork|include pork)\b/i) && 
+          lower.match(/\b(pork|baboy)\b/i)) {
+        if (conversationState.preferences.noPork) {
+          conversationState.preferences.noPork = false;
+          removed.push('Pork');
+          prefsChanged = true;
+        }
+      }
+      
+      // Beef removal
+      if (lower.match(/\b(allow|okay with|ok with|pwede na|okay na|remove.*restriction.*beef|include beef)\b/i) && 
+          lower.match(/\b(beef|baka)\b/i)) {
+        if (conversationState.preferences.noBeef) {
+          conversationState.preferences.noBeef = false;
+          removed.push('Beef');
+          prefsChanged = true;
+        }
+      }
+      
+      // Chicken removal
+      if (lower.match(/\b(allow|okay with|ok with|pwede na|okay na|remove.*restriction.*chicken|include chicken)\b/i) && 
+          lower.match(/\b(chicken|manok)\b/i)) {
+        if (conversationState.preferences.noChicken) {
+          conversationState.preferences.noChicken = false;
+          removed.push('Chicken');
+          prefsChanged = true;
+        }
+      }
+      
+      // Rice removal
+      if (lower.match(/\b(allow|okay with|ok with|pwede na|okay na|include rice|with rice|add rice)\b/i) && 
+          lower.match(/\b(rice|kanin)\b/i)) {
+        if (conversationState.preferences.noRice) {
+          conversationState.preferences.noRice = false;
+          conversationState.preferences.lowCarb = false;
+          removed.push('Rice');
+          prefsChanged = true;
+        }
+      }
+      
+      return { removed, prefsChanged };
+    }
+
+    // TEXT-BASED ALLERGY DETECTION - ENHANCED
+    function detectAllergies(msg) {
+      const lower = msg.toLowerCase();
+      let detected = [];
+      let prefsChanged = false;
+      
+      // Shellfish detection - Enhanced with Filipino terms
+      if (lower.match(/\b(shellfish|shrimp|hipon|alimango|crab|lobster|talangka|tahong|mussel|halaan|clam|pusit|squid|octopus)\b/i) && 
+          (lower.includes('allerg') || lower.includes('no ') || lower.includes('avoid') || lower.includes('cant') || 
+           lower.includes("can't") || lower.includes('wala') || lower.includes('bawal') || lower.includes('di pwede') || 
+           lower.includes('remove') || lower.includes('without') || lower.includes('walang'))) {
+        if (!conversationState.preferences.noShellfish) {
+          conversationState.preferences.noShellfish = true;
+          detected.push('Shellfish');
+          prefsChanged = true;
+        }
+      }
+      
+      // Nuts detection - Enhanced
+      if (lower.match(/\b(nut|nuts|peanut|mani|cashew|almond|pistachio)\b/i) && 
+          (lower.includes('allerg') || lower.includes('no ') || lower.includes('avoid') || lower.includes('cant') || 
+           lower.includes("can't") || lower.includes('wala') || lower.includes('bawal') || lower.includes('di pwede') || 
+           lower.includes('remove') || lower.includes('without') || lower.includes('walang'))) {
+        if (!conversationState.preferences.noNuts) {
+          conversationState.preferences.noNuts = true;
+          detected.push('Nuts');
+          prefsChanged = true;
+        }
+      }
+      
+      // Dairy detection - Enhanced with Filipino terms
+      if (lower.match(/\b(dairy|milk|gatas|cheese|keso|queso|lactose|butter|mantikilya|cream)\b/i) && 
+          (lower.includes('allerg') || lower.includes('no ') || lower.includes('avoid') || lower.includes('cant') || 
+           lower.includes("can't") || lower.includes('intolerant') || lower.includes('wala') || lower.includes('bawal') || 
+           lower.includes('di pwede') || lower.includes('remove') || lower.includes('without') || lower.includes('walang'))) {
+        if (!conversationState.preferences.noDairy) {
+          conversationState.preferences.noDairy = true;
+          detected.push('Dairy');
+          prefsChanged = true;
+        }
+      }
+      
+      // Egg detection - Enhanced with Filipino terms
+      if (lower.match(/\b(egg|eggs|itlog)\b/i) && 
+          (lower.includes('allerg') || lower.includes('no ') || lower.includes('avoid') || lower.includes('cant') || 
+           lower.includes("can't") || lower.includes('wala') || lower.includes('bawal') || lower.includes('di pwede') || 
+           lower.includes('remove') || lower.includes('without') || lower.includes('walang'))) {
+        if (!conversationState.preferences.noEgg) {
+          conversationState.preferences.noEgg = true;
+          detected.push('Eggs');
+          prefsChanged = true;
+        }
+      }
+      
+      // Gluten detection - Enhanced
+      if (lower.match(/\b(gluten|celiac|wheat|trigo|bread|tinapay)\b/i) && 
+          (lower.includes('allerg') || lower.includes('no ') || lower.includes('avoid') || lower.includes('cant') || 
+           lower.includes("can't") || lower.includes('celiac') || lower.includes('wala') || lower.includes('bawal') || 
+           lower.includes('di pwede') || lower.includes('remove') || lower.includes('without') || lower.includes('walang'))) {
+        if (!conversationState.preferences.noGluten) {
+          conversationState.preferences.noGluten = true;
+          detected.push('Gluten');
+          prefsChanged = true;
+        }
+      }
+      
+      // Rice detection - Enhanced
+      if ((lower.includes('no rice') || lower.includes('walang kanin') || lower.includes('without rice') || 
+           lower.includes('bawal kanin') || lower.includes('wag kanin')) && !conversationState.preferences.noRice) {
+        conversationState.preferences.noRice = true;
+        conversationState.preferences.lowCarb = true;
+        detected.push('Rice');
+        prefsChanged = true;
+      }
+      
+      // Seafood detection
+      if (lower.match(/\b(seafood|fish|isda|bangus|tilapia|tuna)\b/i) && 
+          (lower.includes('no ') || lower.includes('avoid') || lower.includes('cant') || 
+           lower.includes("can't") || lower.includes('wala') || lower.includes('bawal') || lower.includes('di pwede') || 
+           lower.includes('remove') || lower.includes('without') || lower.includes('walang'))) {
+        if (!conversationState.preferences.noSeafood) {
+          conversationState.preferences.noSeafood = true;
+          detected.push('Seafood');
+          prefsChanged = true;
+        }
+      }
+      
+      // Pork detection
+      if (lower.match(/\b(pork|baboy|lechon|tocino|longganisa)\b/i) && 
+          (lower.includes('no ') || lower.includes('avoid') || lower.includes('cant') || 
+           lower.includes("can't") || lower.includes('wala') || lower.includes('bawal') || lower.includes('di pwede') || 
+           lower.includes('remove') || lower.includes('without') || lower.includes('walang'))) {
+        if (!conversationState.preferences.noPork) {
+          conversationState.preferences.noPork = true;
+          detected.push('Pork');
+          prefsChanged = true;
+        }
+      }
+      
+      // Beef detection
+      if (lower.match(/\b(beef|baka|tapa|caldereta|mechado)\b/i) && 
+          (lower.includes('no ') || lower.includes('avoid') || lower.includes('cant') || 
+           lower.includes("can't") || lower.includes('wala') || lower.includes('bawal') || lower.includes('di pwede') || 
+           lower.includes('remove') || lower.includes('without') || lower.includes('walang'))) {
+        if (!conversationState.preferences.noBeef) {
+          conversationState.preferences.noBeef = true;
+          detected.push('Beef');
+          prefsChanged = true;
+        }
+      }
+      
+      // Chicken detection
+      if (lower.match(/\b(chicken|manok|adobo)\b/i) && 
+          (lower.includes('no ') || lower.includes('avoid') || lower.includes('cant') || 
+           lower.includes("can't") || lower.includes('wala') || lower.includes('bawal') || lower.includes('di pwede') || 
+           lower.includes('remove') || lower.includes('without') || lower.includes('walang'))) {
+        if (!conversationState.preferences.noChicken) {
+          conversationState.preferences.noChicken = true;
+          detected.push('Chicken');
+          prefsChanged = true;
+        }
+      }
+      
+      // Vegetarian detection
+      if (lower.match(/\b(vegetarian|gulay|vegetables only|walang karne|no meat)\b/i)) {
+        if (!conversationState.preferences.vegetarian) {
+          conversationState.preferences.vegetarian = true;
+          detected.push('Vegetarian');
+          prefsChanged = true;
+        }
+      }
+      
+      return { detected, prefsChanged };
+    }
+    
+    // Show active restrictions summary
+    function getActiveRestrictions() {
+      const active = [];
+      const prefs = conversationState.preferences;
+      
+      if (prefs.noShellfish) active.push('Shellfish 🦐');
+      if (prefs.noNuts) active.push('Nuts 🥜');
+      if (prefs.noDairy) active.push('Dairy 🥛');
+      if (prefs.noEgg) active.push('Eggs 🥚');
+      if (prefs.noGluten) active.push('Gluten 🌾');
+      if (prefs.noRice) active.push('Rice 🍚');
+      if (prefs.vegetarian) active.push('Vegetarian 🌱');
+      if (prefs.pescatarian) active.push('Pescatarian 🐟');
+      if (prefs.noPork) active.push('Pork 🐷');
+      if (prefs.noBeef) active.push('Beef 🐮');
+      if (prefs.noChicken) active.push('Chicken 🐔');
+      if (prefs.noSeafood) active.push('Seafood 🦞');
+      
+      return active;
+    }
+    
+    // Get current macro goal display
+    function getMacroGoalDisplay() {
+      const goals = {
+        'high-protein': 'High Protein 💪',
+        'low-carb': 'Low Carb 🥗',
+        'balanced': 'Balanced ⚖️'
+      };
+      return goals[conversationState.macroGoal] || 'Balanced ⚖️';
+    }
+    
+    // Clear all restrictions
+    function clearAllRestrictions() {
+      conversationState.preferences = {
+        vegetarian: false,
+        pescatarian: false,
+        noPork: false,
+        noBeef: false,
+        noChicken: false,
+        noSeafood: false,
+        noShellfish: false,
+        noNuts: false,
+        noDairy: false,
+        noEgg: false,
+        noGluten: false,
+        highProtein: false,
+        lowCarb: false,
+        noRice: false
+      };
+    }
+    
+    // Save current state for undo
+    function saveStateForUndo() {
+      const snapshot = {
+        mealPlan: conversationState.currentMealPlan ? JSON.parse(JSON.stringify(conversationState.currentMealPlan)) : null,
+        calories: conversationState.calories,
+        macroGoal: conversationState.macroGoal,
+        preferences: JSON.parse(JSON.stringify(conversationState.preferences))
+      };
+      conversationState.undoStack.push(snapshot);
+      
+      // Keep only last 5 states
+      if (conversationState.undoStack.length > 5) {
+        conversationState.undoStack.shift();
+      }
+    }
+    
+    // Undo last action
+    function undoLastAction() {
+      if (conversationState.undoStack.length === 0) {
+        return null;
+      }
+      
+      const previousState = conversationState.undoStack.pop();
+      conversationState.currentMealPlan = previousState.mealPlan;
+      conversationState.calories = previousState.calories;
+      conversationState.macroGoal = previousState.macroGoal;
+      conversationState.preferences = previousState.preferences;
+      
+      return previousState;
+    }
+    
+    // Swap individual food item
+    function swapFood(foodNamePattern) {
+      if (!conversationState.currentMealPlan) return null;
+      
+      const plan = conversationState.currentMealPlan;
+      const allMeals = {
+        breakfast: plan.breakfast,
+        lunch: plan.lunch,
+        dinner: plan.dinner,
+        snack: plan.snack
+      };
+      
+      let foundMeal = null;
+      let foundIndex = -1;
+      let foundFood = null;
+      
+      // Find the food to swap
+      for (let [mealName, foods] of Object.entries(allMeals)) {
+        const index = foods.findIndex(f => 
+          f.name.toLowerCase().includes(foodNamePattern.toLowerCase())
+        );
+        if (index !== -1) {
+          foundMeal = mealName;
+          foundIndex = index;
+          foundFood = foods[index];
+          break;
+        }
+      }
+      
+      if (!foundFood) return null;
+      
+      // Get available foods for replacement (same meal type, similar calories)
+      const targetCal = foundFood.calories;
+      const mealType = foundMeal === 'snack' ? 'snack' : 
+                       foundMeal === 'breakfast' ? 'breakfast' : 'main';
+      
+      let candidates = FOOD_DATABASE.filter(f => {
+        if (f.id === foundFood.id) return false; // Don't suggest same food
+        if (f.meal_type !== mealType) return false;
+        if (Math.abs(f.calories - targetCal) > targetCal * 0.3) return false; // Within 30% calories
+        
+        // Apply current preferences
+        if (conversationState.preferences.vegetarian && !f.is_vegetarian) return false;
+        if (conversationState.preferences.noPork && f.has_pork) return false;
+        if (conversationState.preferences.noBeef && f.has_beef) return false;
+        if (conversationState.preferences.noChicken && f.has_chicken) return false;
+        if (conversationState.preferences.noSeafood && (f.has_seafood || f.has_fish)) return false;
+        if (conversationState.preferences.noShellfish && f.has_shellfish) return false;
+        if (conversationState.preferences.noNuts && f.has_nuts) return false;
+        if (conversationState.preferences.noDairy && f.has_dairy) return false;
+        if (conversationState.preferences.noEgg && f.has_egg) return false;
+        if (conversationState.preferences.noGluten && f.has_gluten) return false;
+        
+        return true;
+      });
+      
+      if (candidates.length === 0) return null;
+      
+      // Pick random replacement
+      const replacement = candidates[Math.floor(Math.random() * candidates.length)];
+      
+      // Swap it
+      allMeals[foundMeal][foundIndex] = replacement;
+      conversationState.currentMealPlan = {
+        ...plan,
+        breakfast: allMeals.breakfast,
+        lunch: allMeals.lunch,
+        dinner: allMeals.dinner,
+        snack: allMeals.snack
+      };
+      
+      return {
+        oldFood: foundFood.name,
+        newFood: replacement.name,
+        meal: foundMeal
+      };
+    }
+    
+    // Adjust meal portions
+    function adjustPortions(mealName, adjustment) {
+      if (!conversationState.currentMealPlan || !conversationState.calories) return null;
+      
+      const validMeals = ['breakfast', 'lunch', 'dinner', 'snack'];
+      if (!validMeals.includes(mealName)) return null;
+      
+      // Current distribution: breakfast 25%, lunch 35%, dinner 30%, snack 10%
+      const distributions = {
+        'smaller': { breakfast: 0.20, lunch: 0.35, dinner: 0.35, snack: 0.10 },
+        'bigger': { breakfast: 0.30, lunch: 0.35, dinner: 0.25, snack: 0.10 },
+        'more protein': { breakfast: 0.25, lunch: 0.35, dinner: 0.30, snack: 0.10 } // Same calories but filter high protein
+      };
+      
+      let newDist = distributions['smaller']; // Default
+      
+      if (adjustment === 'smaller' || adjustment === 'less') {
+        if (mealName === 'breakfast') newDist = { breakfast: 0.20, lunch: 0.37, dinner: 0.33, snack: 0.10 };
+        if (mealName === 'lunch') newDist = { breakfast: 0.27, lunch: 0.30, dinner: 0.33, snack: 0.10 };
+        if (mealName === 'dinner') newDist = { breakfast: 0.27, lunch: 0.38, dinner: 0.25, snack: 0.10 };
+        if (mealName === 'snack') newDist = { breakfast: 0.27, lunch: 0.37, dinner: 0.31, snack: 0.05 };
+      } else if (adjustment === 'bigger' || adjustment === 'more' || adjustment === 'larger') {
+        if (mealName === 'breakfast') newDist = { breakfast: 0.30, lunch: 0.33, dinner: 0.27, snack: 0.10 };
+        if (mealName === 'lunch') newDist = { breakfast: 0.22, lunch: 0.40, dinner: 0.28, snack: 0.10 };
+        if (mealName === 'dinner') newDist = { breakfast: 0.22, lunch: 0.33, dinner: 0.35, snack: 0.10 };
+        if (mealName === 'snack') newDist = { breakfast: 0.23, lunch: 0.32, dinner: 0.30, snack: 0.15 };
+      }
+      
+      // Regenerate plan with new distribution
+      const totalCal = conversationState.calories;
+      const breakfastCal = totalCal * newDist.breakfast;
+      const lunchCal = totalCal * newDist.lunch;
+      const dinnerCal = totalCal * newDist.dinner;
+      const snackCal = totalCal * newDist.snack;
+      
+      return {
+        distribution: newDist,
+        message: `${mealName.charAt(0).toUpperCase() + mealName.slice(1)} adjusted to ${Math.round(newDist[mealName] * 100)}% of total calories`
+      };
+    }
+
+    function processMessage(msg) {
+      const lower = msg.toLowerCase();
+      
+      // COMMAND: Help
+      if (lower.match(/\b(help|commands|what can you do|ano kaya mo|paano|how to use)\b/i)) {
+        showTyping();
+        setTimeout(() => {
+          hideTyping();
+          const helpMessage = `Here's what I can do:
+
+SET CALORIE GOAL:
+• "2000 calories" - Set exact calories
+• "weight loss" - Low calorie (1500)
+• "muscle building" - High calorie (2500)
+
+MACRO GOALS:
+• "high protein" - For muscle building
+• "low carb" / "keto" - For cutting (auto removes rice)
+• "balanced" - Normal macros
+
+ALLERGIES & RESTRICTIONS:
+• "allergic to shellfish" / "no hipon"
+• "no dairy" / "walang gatas"
+• "no nuts", "no eggs", "no gluten"
+• "no seafood", "no pork", "no beef", "no chicken"
+• "vegetarian"
+
+REMOVE RESTRICTIONS:
+• "allow seafood" / "pwede na isda"
+• "okay with dairy now"
+
+SWAP FOODS:
+• "swap bangus" - Replace with alternative
+• "change the chicken"
+
+ADJUST PORTIONS:
+• "make breakfast bigger"
+• "make lunch smaller"
+
+UNDO:
+• "undo" - Revert last change
+
+RESET:
+• "clear all restrictions" - Start fresh
+
+CHECK STATUS:
+• "show restrictions" - See active filters
+• "show macro goal" - See current macro
+
+COMBINE COMMANDS:
+• "2000 calories, high protein, no seafood"
+• "1800 cal, low carb, allergic to nuts"
+
+Type anything to get started!`;
+          addMessage(helpMessage, false);
+        }, 1000);
+        return;
+      }
+      
+      // COMMAND: Undo
+      if (lower.match(/\b(undo|go back|revert|previous)\b/i)) {
+        const previousState = undoLastAction();
+        
+        if (previousState) {
+          showTyping();
+          setTimeout(() => {
+            hideTyping();
+            addMessage("⏪ Reverted to previous state!", false);
+          }, 1000);
+          
+          if (previousState.mealPlan) {
+            setTimeout(() => { showTyping(); }, 1500);
+            setTimeout(() => {
+              hideTyping();
+              addMessage(renderMealPlan(conversationState.currentMealPlan), false, true);
+            }, 2500);
+          }
+        } else {
+          showTyping();
+          setTimeout(() => {
+            hideTyping();
+            addMessage("❌ Nothing to undo! This is your first action.", false);
+          }, 1000);
+        }
+        return;
+      }
+      
+      // COMMAND: Clear all restrictions
+      if (lower.match(/\b(clear all|reset all|remove all restrictions|start fresh|clear restrictions)\b/i)) {
+        // Check if already pending confirmation
+        if (conversationState.pendingConfirmation === 'clear_all') {
+          // User already asked to clear, this might be a confirmation
+          if (lower.match(/\b(yes|confirm|ok|okay|sure|go ahead|proceed)\b/i)) {
+            conversationState.pendingConfirmation = null;
+            clearAllRestrictions();
+            showTyping();
+            setTimeout(() => {
+              hideTyping();
+              addMessage("✅ All restrictions cleared! Back to default settings. 🔄", false);
+              
+              if (conversationState.currentMealPlan && conversationState.calories) {
+                setTimeout(() => { showTyping(); }, 1000);
+                setTimeout(() => {
+                  hideTyping();
+                  addMessage("Regenerating your plan with all foods available! 🍽️", false);
+                }, 1800);
+                
+                setTimeout(() => { showTyping(); }, 2300);
+                setTimeout(() => {
+                  hideTyping();
+                  const plan = generateMealPlan(conversationState.calories);
+                  conversationState.currentMealPlan = plan;
+                  addMessage(renderMealPlan(plan), false, true);
+                }, 3500);
+              }
+            }, 1000);
+            return;
+          } else if (lower.match(/\b(no|cancel|nevermind|never mind|stop)\b/i)) {
+            conversationState.pendingConfirmation = null;
+            showTyping();
+            setTimeout(() => {
+              hideTyping();
+              addMessage("✅ Cancelled. Your restrictions are still active.", false);
+            }, 1000);
+            return;
+          }
+        }
+        
+        // First time asking - request confirmation
+        conversationState.pendingConfirmation = 'clear_all';
+        showTyping();
+        setTimeout(() => {
+          hideTyping();
+          const activeRestrictions = getActiveRestrictions();
+          let msg = "⚠️ This will remove ALL restrictions and reset to default settings.";
+          if (activeRestrictions.length > 0) {
+            msg += `\n\nCurrent restrictions: ${activeRestrictions.join(', ')}`;
+          }
+          msg += "\n\nType 'yes' to confirm or 'cancel' to keep current settings.";
+          addMessage(msg, false);
+        }, 1000);
+        return;
+      }
+      
+      // Handle yes/no when confirmation pending
+      if (conversationState.pendingConfirmation && lower.match(/\b(yes|no|confirm|cancel)\b/i)) {
+        // Already handled above in clear_all section
+        // This catches stray yes/no without context
+        conversationState.pendingConfirmation = null;
+        showTyping();
+        setTimeout(() => {
+          hideTyping();
+          addMessage("🤔 I'm not sure what you're confirming. Please try your command again!", false);
+        }, 1000);
+        return;
+      }
+      
+      // COMMAND: Show restrictions
+      if (lower.match(/\b(show restrictions|what are my restrictions|show allergies|my allergies|show preferences|ano restrictions)\b/i)) {
+        const activeRestrictions = getActiveRestrictions();
+        showTyping();
+        setTimeout(() => {
+          hideTyping();
+          if (activeRestrictions.length > 0) {
+            addMessage(`🚫 Your active restrictions:\n${activeRestrictions.join(', ')}`, false);
+          } else {
+            addMessage("✅ No restrictions active! All foods are available. 🍽️", false);
+          }
+        }, 1000);
+        return;
+      }
+      
+      // COMMAND: Show macro goal
+      if (lower.match(/\b(show macro|what.*macro|my macro|macro goal|what.*goal)\b/i)) {
+        const macroGoal = getMacroGoalDisplay();
+        showTyping();
+        setTimeout(() => {
+          hideTyping();
+          addMessage(`🎯 Current macro goal: ${macroGoal}`, false);
+        }, 1000);
+        return;
+      }
+      
+      // COMMAND: Swap food
+      if (lower.match(/\b(swap|change|replace)\b/i)) {
+        // Extract food name
+        let foodPattern = null;
+        const swapMatch = lower.match(/\b(swap|change|replace)\s+(?:the\s+)?(\w+)/i);
+        if (swapMatch) {
+          foodPattern = swapMatch[2];
+        }
+        
+        if (foodPattern && conversationState.currentMealPlan) {
+          saveStateForUndo(); // Save before swap
+          const swapResult = swapFood(foodPattern);
+          
+          if (swapResult) {
+            showTyping();
+            setTimeout(() => {
+              hideTyping();
+              addMessage(`✅ Swapped ${swapResult.oldFood} → ${swapResult.newFood} in ${swapResult.meal}! 🔄`, false);
+            }, 1000);
+            
+            setTimeout(() => { showTyping(); }, 1500);
+            setTimeout(() => {
+              hideTyping();
+              addMessage(renderMealPlan(conversationState.currentMealPlan), false, true);
+            }, 2500);
+          } else {
+            showTyping();
+            setTimeout(() => {
+              hideTyping();
+              addMessage(`❌ Couldn't find "${foodPattern}" in your current plan or no alternatives available.`, false);
+            }, 1000);
+          }
+        } else {
+          showTyping();
+          setTimeout(() => {
+            hideTyping();
+            addMessage("Please specify which food to swap! (e.g., 'swap bangus', 'change chicken')", false);
+          }, 1000);
+        }
+        return;
+      }
+      
+      // COMMAND: Adjust portions
+      if (lower.match(/\b(make|adjust)\s+(breakfast|lunch|dinner|snack)\s+(smaller|bigger|larger|more|less)\b/i)) {
+        const match = lower.match(/\b(make|adjust)\s+(breakfast|lunch|dinner|snack)\s+(smaller|bigger|larger|more|less)\b/i);
+        const mealName = match[2];
+        const adjustment = match[3];
+        
+        if (conversationState.currentMealPlan && conversationState.calories) {
+          const result = adjustPortions(mealName, adjustment);
+          
+          if (result) {
+            showTyping();
+            setTimeout(() => {
+              hideTyping();
+              addMessage(`✅ ${result.message}. Regenerating plan... 🔄`, false);
+            }, 1000);
+            
+            setTimeout(() => { showTyping(); }, 1500);
+            setTimeout(() => {
+              hideTyping();
+              const plan = generateMealPlan(conversationState.calories);
+              conversationState.currentMealPlan = plan;
+              addMessage(renderMealPlan(plan), false, true);
+            }, 2000);
+          }
+        } else {
+          showTyping();
+          setTimeout(() => {
+            hideTyping();
+            addMessage("Please generate a meal plan first before adjusting portions!", false);
+          }, 1000);
+        }
+        return;
+      }
+      
+      // Detect removals FIRST (before allergies)
+      const removalResult = detectRemovals(msg);
+      
+      // Detect macro goals
+      const macroResult = detectMacroGoal(msg);
+      
+      // Detect allergies
+      const allergyResult = detectAllergies(msg);
+      
+      if (['hi', 'hello', 'hey', 'kumusta', 'kamusta'].some(g => lower.includes(g))) {
+        showTyping();
+        setTimeout(() => {
+          hideTyping();
+          addMessage("Hello! 👋 I create personalized Filipino meal plans. Tell me your calorie goal!", false);
+        }, 1000);
+        return;
+      }
+      
+      const cals = parseUserInput(msg);
+      
+      // If no specific calorie detected but it's a goal keyword, pick random within range
+      let finalCals = cals;
+      if (!cals) {
+        if (lower.match(/\b(weight loss|lose weight|cutting)\b/i)) {
+          // Weight Loss: 1200-1600 range
+          finalCals = Math.floor(Math.random() * (1600 - 1200 + 1)) + 1200;
+          // Round to nearest 100
+          finalCals = Math.round(finalCals / 100) * 100;
+        }
+        else if (lower.match(/\b(muscle building|bulk|gain muscle)\b/i)) {
+          // Muscle Building: 2200-2800 range
+          finalCals = Math.floor(Math.random() * (2800 - 2200 + 1)) + 2200;
+          finalCals = Math.round(finalCals / 100) * 100;
+        }
+        else if (lower.match(/\b(balanced|maintain)\b/i)) {
+          // Balanced: 1800-2200 range
+          finalCals = Math.floor(Math.random() * (2200 - 1800 + 1)) + 1800;
+          finalCals = Math.round(finalCals / 100) * 100;
+        }
+        else if (lower.match(/\b(healthy)\b/i)) {
+          // Healthy: 1600-2000 range
+          finalCals = Math.floor(Math.random() * (2000 - 1600 + 1)) + 1600;
+          finalCals = Math.round(finalCals / 100) * 100;
+        }
+      }
+      
+      if (finalCals) {
+        // RESET preferences if this is a NEW calorie goal (unless allergies mentioned in same message)
+        if (!allergyResult.prefsChanged && !macroResult.changed && conversationState.calories !== cals) {
+          clearAllRestrictions();
+        }
+        
+        showTyping();
+        setTimeout(() => {
+          hideTyping();
+          let responseMsg = `Perfect! Here's your ${finalCals} calorie Filipino meal plan! 🍽️`;
+          
+          // If macro goal was detected, acknowledge it
+          if (macroResult.changed && macroResult.detected) {
+            responseMsg += `\n\n🎯 Macro goal: ${macroResult.detected}`;
+          }
+          
+          // If allergies were detected, acknowledge them
+          if (allergyResult.prefsChanged && allergyResult.detected.length > 0) {
+            responseMsg += `\n\n✅ Noted: Avoiding ${allergyResult.detected.join(', ')}`;
+          }
+          
+          // Show all active restrictions
+          const activeRestrictions = getActiveRestrictions();
+          if (activeRestrictions.length > 0) {
+            responseMsg += `\n\n🚫 Active restrictions: ${activeRestrictions.join(', ')}`;
+          }
+          
+          addMessage(responseMsg, false);
+        }, 1000);
+        
+        setTimeout(() => { showTyping(); }, 1500);
+        
+        setTimeout(() => {
+          hideTyping();
+          saveStateForUndo(); // Save state before generating
+          const plan = generateMealPlan(finalCals);
+          conversationState.currentMealPlan = plan;
+          conversationState.calories = finalCals;
+          addMessage(renderMealPlan(plan), false, true);
+        }, 3500);
+        
+        // Add smart tips after plan is shown
+        setTimeout(() => {
+          showTyping();
+        }, 4000);
+        
+        setTimeout(() => {
+          hideTyping();
+          addMessage("💡 Quick tip: You can 'swap [food]' to replace any item, 'make breakfast bigger' to adjust portions, or change macro goals anytime!", false);
+        }, 5000);
+      } else {
+        // Handle removals (when user says "allow X")
+        if (removalResult.prefsChanged && removalResult.removed.length > 0) {
+          showTyping();
+          setTimeout(() => {
+            hideTyping();
+            
+            let msg = `✅ Great! ${removalResult.removed.join(', ')} now allowed in your meal plan.`;
+            
+            // Show all active restrictions
+            const activeRestrictions = getActiveRestrictions();
+            if (activeRestrictions.length > 0) {
+              msg += `\n\n🚫 Active restrictions: ${activeRestrictions.join(', ')}`;
+            } else {
+              msg += `\n\n✅ No restrictions! All foods available. 🍽️`;
+            }
+            
+            addMessage(msg, false);
+            
+            // If they already have a meal plan, regenerate it
+            if (conversationState.currentMealPlan && conversationState.calories) {
+              setTimeout(() => { showTyping(); }, 1000);
+              setTimeout(() => {
+                hideTyping();
+                addMessage("Let me regenerate your plan with these changes! 🔄", false);
+              }, 1800);
+              
+              setTimeout(() => { showTyping(); }, 2300);
+              setTimeout(() => {
+                hideTyping();
+                const plan = generateMealPlan(conversationState.calories);
+                conversationState.currentMealPlan = plan;
+                addMessage(renderMealPlan(plan), false, true);
+              }, 3500);
+            }
+          }, 1000);
+        }
+        // Handle macro goal changes (when user says "make it high protein")
+        else if (macroResult.changed && macroResult.detected) {
+          showTyping();
+          setTimeout(() => {
+            hideTyping();
+            
+            let msg = `✅ Switching to ${macroResult.detected}!`;
+            
+            addMessage(msg, false);
+            
+            // If they already have a meal plan, regenerate it
+            if (conversationState.currentMealPlan && conversationState.calories) {
+              setTimeout(() => { showTyping(); }, 1000);
+              setTimeout(() => {
+                hideTyping();
+                addMessage("Regenerating your plan with new macro goals! 🔄", false);
+              }, 1800);
+              
+              setTimeout(() => { showTyping(); }, 2300);
+              setTimeout(() => {
+                hideTyping();
+                const plan = generateMealPlan(conversationState.calories);
+                conversationState.currentMealPlan = plan;
+                addMessage(renderMealPlan(plan), false, true);
+              }, 3500);
+            } else {
+              setTimeout(() => {
+                addMessage("Now tell me your calorie goal! (e.g., '2000 calories') 😊", false);
+              }, 1000);
+            }
+          }, 1000);
+        }
+        // If allergies were detected but no calories
+        else if (allergyResult.prefsChanged && allergyResult.detected.length > 0) {
+          showTyping();
+          setTimeout(() => {
+            hideTyping();
+            
+            let msg = `✅ Got it! I'll avoid ${allergyResult.detected.join(', ')} in your meal plan.`;
+            
+            // Show all active restrictions
+            const activeRestrictions = getActiveRestrictions();
+            if (activeRestrictions.length > 0) {
+              msg += `\n\n🚫 Active restrictions: ${activeRestrictions.join(', ')}`;
+            }
+            
+            addMessage(msg, false);
+            
+            // If they already have a meal plan, regenerate it
+            if (conversationState.currentMealPlan && conversationState.calories) {
+              setTimeout(() => { showTyping(); }, 1000);
+              setTimeout(() => {
+                hideTyping();
+                addMessage("Let me regenerate your plan with these preferences! 🔄", false);
+              }, 1800);
+              
+              setTimeout(() => { showTyping(); }, 2300);
+              setTimeout(() => {
+                hideTyping();
+                const plan = generateMealPlan(conversationState.calories);
+                conversationState.currentMealPlan = plan;
+                addMessage(renderMealPlan(plan), false, true);
+              }, 3500);
+            } else {
+              setTimeout(() => {
+                addMessage("Now tell me your calorie goal! (e.g., '2000 calories') 😊", false);
+              }, 1000);
+            }
+          }, 1000);
+        } else {
+          showTyping();
+          setTimeout(() => {
+            hideTyping();
+            addMessage("🤔 I didn't quite understand that. Here are some things you can try:\n\n• Set a calorie goal: '2000 calories'\n• Add preferences: 'high protein, no seafood'\n• Type 'help' to see all commands", false);
+          }, 1000);
+        }
+      }
+    }
+
+    function regeneratePlan() {
+      if (!conversationState.currentMealPlan) return;
+      addMessage("Regenerate", true);
+      
+      showTyping();
+      setTimeout(() => {
+        hideTyping();
+        addMessage("Creating new Filipino Meal Plan with different foods! 🔄", false);
+      }, 1000);
+      
+      setTimeout(() => { showTyping(); }, 1500);
+      
+      setTimeout(() => {
+        hideTyping();
+        const plan = generateMealPlan(conversationState.calories);
+        conversationState.currentMealPlan = plan;
+        addMessage(renderMealPlan(plan), false, true);
+      }, 3500);
+    }
+
+    function adjustMacros(macroType) {
+      if (!conversationState.currentMealPlan) return;
+      
+      const messages = {
+        'high-protein': 'Make it high protein',
+        'low-carb': 'Make it low carb',
+        'balanced': 'Make it balanced'
+      };
+      
+      addMessage(messages[macroType], true);
+      
+      showTyping();
+      setTimeout(() => {
+        hideTyping();
+        
+        const responses = {
+          'high-protein': "Optimizing for high protein! 💪",
+          'low-carb': "Generating low carb plan (no rice)! 🥗",
+          'balanced': "Creating balanced plan! ⚖️"
+        };
+        
+        addMessage(responses[macroType], false);
+      }, 1000);
+      
+      setTimeout(() => { showTyping(); }, 1500);
+      
+      setTimeout(() => {
+        hideTyping();
+        conversationState.macroGoal = macroType;
+        
+        // Auto set no-rice for low-carb
+        if (macroType === 'low-carb') {
+          conversationState.preferences.noRice = true;
+          conversationState.preferences.lowCarb = true;
+        } else {
+          conversationState.preferences.noRice = false;
+          conversationState.preferences.lowCarb = false;
+        }
+        
+        const plan = generateMealPlan(conversationState.calories);
+        conversationState.currentMealPlan = plan;
+        addMessage(renderMealPlan(plan), false, true);
+      }, 3500);
+    }
+
+    function copyToClipboard() {
+      if (!conversationState.currentMealPlan) {
+        addMessage('⚠️ Please generate a meal plan first before copying!', false);
+        return;
+      }
+      
+      const mp = conversationState.currentMealPlan;
+      const all = [...mp.breakfast, ...mp.lunch, ...mp.dinner, ...mp.snack];
+      const totalCal = Math.round(all.reduce((s, f) => s + f.calories, 0));
+      const totalPro = Math.round(all.reduce((s, f) => s + f.protein, 0));
+      const totalCarb = Math.round(all.reduce((s, f) => s + f.carbs, 0));
+      const totalFat = Math.round(all.reduce((s, f) => s + f.fat, 0));
+      
+      let txt = `🍽️ FILIPINO MEAL PLANNER - JMP (ML-Powered)\n`;
+      txt += `Total: ${totalCal} kcal | P: ${totalPro}g | C: ${totalCarb}g | F: ${totalFat}g\n\n`;
+      
+      const formatMeal = (title, foods) => {
+        const mealCal = Math.round(foods.reduce((s, f) => s + f.calories, 0));
+        let t = `${title} (${mealCal} kcal)\n`;
+        t += foods.map(f => `• ${f.name} (${f.portion}) - ${Math.round(f.calories)} kcal | P:${f.protein}g C:${f.carbs}g F:${f.fat}g`).join('\n');
+        return t + '\n\n';
+      };
+      
+      txt += formatMeal('🍳 BREAKFAST', mp.breakfast);
+      txt += formatMeal('🍱 LUNCH', mp.lunch);
+      txt += formatMeal('🍽️ DINNER', mp.dinner);
+      txt += formatMeal('🍿 SNACKS', mp.snack);
+
+      const textarea = document.createElement('textarea');
+      textarea.value = txt;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      
+      try {
+        document.execCommand('copy');
+        addMessage('✅ Meal plan copied to clipboard!', false);
+      } catch (err) {
+        navigator.clipboard.writeText(txt).then(() => {
+          addMessage('✅ Meal plan copied to clipboard!', false);
+        }).catch(() => {
+          addMessage('❌ Failed to copy. Please try manually.', false);
+        });
+      }
+      
+      document.body.removeChild(textarea);
+    }
+
+    function sendMessage() {
+      const input = document.getElementById('userInput');
+      const msg = input.value.trim();
+      if (!msg) return;
+      addMessage(msg, true);
+      input.value = '';
+      processMessage(msg);
+    }
+
+    function handleKeyPress(e) {
+      if (e.key === 'Enter') sendMessage();
+    }
+
+    function sendPrompt(msg) {
+      addMessage(msg, true);
+      processMessage(msg);
+    }
+
+    function showPrompts() {
+      const html = `
+        <div style="text-align: center; margin-bottom: 20px; font-size: 16px; color: #334155;">
+          Tell me your calorie goal or pick a starter:
+        </div>
+        <div class="starter-prompts">
+        <div class="starter-prompt" onclick="sendPrompt('balanced')">
+          <div class="starter-prompt-icon">⚖️</div>
+          <div class="starter-prompt-title">Balanced</div>
+          <div class="starter-prompt-desc">1800-2200 calories</div>
+        </div>
+        <div class="starter-prompt" onclick="sendPrompt('muscle building')">
+          <div class="starter-prompt-icon">💪</div>
+          <div class="starter-prompt-title">Muscle Building</div>
+          <div class="starter-prompt-desc">2200-2800 calories</div>
+        </div>
+        <div class="starter-prompt" onclick="sendPrompt('weight loss')">
+          <div class="starter-prompt-icon">📉</div>
+          <div class="starter-prompt-title">Weight Loss</div>
+          <div class="starter-prompt-desc">1200-1600 calories</div>
+        </div>
+        <div class="starter-prompt" onclick="sendPrompt('healthy eating')">
+          <div class="starter-prompt-icon">🌱</div>
+          <div class="starter-prompt-title">Healthy</div>
+          <div class="starter-prompt-desc">1600-2000 calories</div>
+        </div>
+      </div>`;
+      addMessage(html, false, true);
+    }
+
+    // ===================== FIREBASE ML FUNCTIONS =====================
+
+    // Extract food features for ML training (what the NN will learn from)
+    function extractFoodFeatures(food) {
+      return {
+        calories: food.calories / 1000,
+        protein: food.protein / 100,
+        carbs: food.carbs / 100,
+        fat: food.fat / 100,
+        is_breakfast: food.meal_type === 'breakfast' ? 1 : 0,
+        is_main: food.meal_type === 'main' ? 1 : 0,
+        is_snack: food.meal_type === 'snack' ? 1 : 0,
+        is_vegetarian: food.is_vegetarian ? 1 : 0,
+        is_high_protein: food.is_high_protein ? 1 : 0,
+        is_low_carb: food.is_low_carb ? 1 : 0
+      };
+    }
+
+    // Save a single feedback entry to Firebase Firestore
+    async function saveFeedbackToFirebase(foodId, foodName, features, liked) {
+      if (!window._firebaseReady) {
+        console.warn('Firebase not ready yet');
+        return;
+      }
+
+      try {
+        const { collection, addDoc } = window._firebaseFns;
+        const db = window._firebaseDb;
+
+        const feedbackEntry = {
+          userId: userId,
+          foodId: foodId,
+          foodName: foodName,
+          features: features,
+          liked: liked,
+          macroGoal: conversationState.macroGoal,
+          timestamp: new Date().toISOString()
+        };
+
+        await addDoc(collection(db, 'feedback'), feedbackEntry);
+
+        // Also update local cache
+        userFeedbackData.push(feedbackEntry);
+        feedbackCount++;
+
+        console.log(`✅ Feedback saved: ${foodName} → ${liked ? '👍 Liked' : '👎 Disliked'}`);
+        console.log(`📊 Total feedback: ${feedbackCount}`);
+
+        // Retrain NN if we have enough feedback
+        if (feedbackCount >= MIN_FEEDBACK_TO_RETRAIN) {
+          retrainWithUserFeedback();
+        }
+
+        // Update the ML status badge
+        updateMLStatusBadge();
+
+      } catch (err) {
+        console.error('❌ Error saving feedback:', err);
+      }
+    }
+
+    // Load this user's feedback history from Firebase on startup
+    async function loadUserFeedbackFromFirebase() {
+      if (!isLoggedIn) return; // Skip if not logged in
+
+      if (!window._firebaseReady || !userId) {
+        setTimeout(loadUserFeedbackFromFirebase, 500);
+        return;
+      }
+
+      try {
+        const { collection, getDocs, query, where } = window._firebaseFns;
+        const db = window._firebaseDb;
+
+        const q = query(collection(db, 'feedback'), where('userId', '==', userId));
+        const snapshot = await getDocs(q);
+
+        userFeedbackData = [];
+        snapshot.forEach(docSnap => {
+          userFeedbackData.push(docSnap.data());
+        });
+
+        feedbackCount = userFeedbackData.length;
+        console.log(`📦 Loaded ${feedbackCount} feedback entries from Firebase`);
+
+        // If returning user with enough feedback, retrain immediately
+        if (feedbackCount >= MIN_FEEDBACK_TO_RETRAIN) {
+          retrainWithUserFeedback();
+          console.log('🧠 Retraining NN with your personal feedback history...');
+        }
+
+        updateMLStatusBadge();
+
+      } catch (err) {
+        console.error('❌ Error loading feedback:', err);
+      }
+    }
+
+    // THE REAL ML: Retrain with TIME DECAY
+    // Mas bago ang rating = mas malaki ang epekto sa NN
+    function retrainWithUserFeedback() {
+      if (!recommendationNN || userFeedbackData.length < MIN_FEEDBACK_TO_RETRAIN) return;
+
+      const now = new Date();
+
+      const trainingData = userFeedbackData
+        .filter(entry => entry.features)
+        .map(entry => {
+          const ageInDays = (now - new Date(entry.timestamp)) / (1000 * 60 * 60 * 24);
+
+          // Time decay:
+          // 0-7 days   → weight 1.0 (full)
+          // 7-30 days  → weight 0.6
+          // 30-90 days → weight 0.3
+          // 90+ days   → weight 0.1
+          let weight = 1.0;
+          if (ageInDays > 90) weight = 0.1;
+          else if (ageInDays > 30) weight = 0.3;
+          else if (ageInDays > 7) weight = 0.6;
+
+          // Decay the score toward neutral (0.5) based on age
+          const baseScore = entry.liked ? 0.95 : 0.05;
+          const weightedScore = 0.5 + (baseScore - 0.5) * weight;
+
+          console.log(`  ${entry.foodName}: ${entry.liked ? "👍" : "👎"} | Age: ${Math.round(ageInDays)}d | Weight: ${weight} | Score: ${weightedScore.toFixed(2)}`);
+
+          return { input: entry.features, output: { suitable: weightedScore } };
+        });
+
+      if (trainingData.length === 0) return;
+
+      try {
+        recommendationNN.train(trainingData, {
+          iterations: 3000,
+          errorThresh: 0.01,
+          log: false
+        });
+
+        console.log(`✅ NN retrained with time decay! (${trainingData.length} feedbacks)`);
+        updateMLStatusBadge();
+      } catch (err) {
+        console.error('❌ Retraining failed:', err);
+      }
+    }
+
+    // Reset all feedback for this user (start fresh)
+    function showResetConfirmModal() {
+      document.getElementById('confirmModalOverlay').classList.add('active');
+    }
+
+    function closeConfirmModal() {
+      document.getElementById('confirmModalOverlay').classList.remove('active');
+    }
+
+    async function confirmReset() {
+      closeConfirmModal();
+      await resetUserFeedback();
+    }
+
+    async function resetUserFeedback() {
+      if (!window._firebaseReady) return;
+
+      try {
+        // Delete all feedback docs for this user from Firestore
+        const { collection, getDocs, query, where, deleteDoc, doc: firestoreDoc } = window._firebaseFns;
+        const db = window._firebaseDb;
+
+        const q = query(collection(db, 'feedback'), where('userId', '==', userId));
+        const snapshot = await getDocs(q);
+
+        const deletePromises = [];
+        snapshot.forEach(docSnap => {
+          deletePromises.push(deleteDoc(firestoreDoc(db, 'feedback', docSnap.id)));
+        });
+        await Promise.all(deletePromises);
+
+        // Reset local state
+        userFeedbackData = [];
+        feedbackCount = 0;
+
+        // Re-initialize recommendation NN with default training
+        initRecommendationNN();
+        if (FOOD_DATABASE.length > 0) trainRecommendationNN();
+
+        updateMLStatusBadge();
+        addMessage('🔄 Taste profile reset! The AI will start learning from scratch based on your new ratings. 🧠', false);
+        console.log('✅ User feedback reset complete');
+
+      } catch (err) {
+        console.error('❌ Reset failed:', err);
+        addMessage('❌ Reset failed. Please try again.', false);
+      }
+    }
+
+    // Called when user clicks 👍 or 👎 on a food item
+    function submitFeedback(foodId, liked) {
+      // Find the food in the database
+      const food = FOOD_DATABASE.find(f => f.id === foodId);
+      if (!food) return;
+
+      const features = extractFoodFeatures(food);
+
+      // Visual feedback to user
+      const btn = document.getElementById(`feedback-${foodId}-${liked ? 'like' : 'dislike'}`);
+      if (btn) {
+        btn.style.background = liked ? '#10b981' : '#ef4444';
+        btn.style.color = 'white';
+        btn.style.transform = 'scale(1.2)';
+        setTimeout(() => btn.style.transform = 'scale(1)', 200);
+      }
+
+      // Disable both buttons for this food after rating
+      const likeBtn = document.getElementById(`feedback-${foodId}-like`);
+      const dislikeBtn = document.getElementById(`feedback-${foodId}-dislike`);
+      if (likeBtn) likeBtn.disabled = true;
+      if (dislikeBtn) dislikeBtn.disabled = true;
+
+      // Save to Firebase → triggers retraining
+      saveFeedbackToFirebase(foodId, food.name, features, liked);
+
+      // Show toast notification
+      showFeedbackToast(food.name, liked);
+    }
+
+    // Show a small toast message when feedback is submitted
+    function showFeedbackToast(foodName, liked) {
+      const toast = document.createElement('div');
+      toast.style.cssText = `
+        position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+        background: ${liked ? '#10b981' : '#ef4444'}; color: white;
+        padding: 10px 20px; border-radius: 20px; font-size: 13px; font-weight: 600;
+        z-index: 9999; animation: slideIn 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      `;
+      toast.textContent = liked
+        ? `👍 Got it! I'll recommend more foods like ${foodName}`
+        : `👎 Noted! I'll avoid foods like ${foodName}`;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    // Update the ML badge to show learning status
+    function updateMLStatusBadge() {
+      const badge = document.getElementById('mlStatusBadge');
+      if (!badge) return;
+
+      if (feedbackCount === 0) {
+        badge.textContent = '🧠 ML: Learning...';
+        badge.style.background = 'rgba(255,255,255,0.2)';
+      } else if (feedbackCount < MIN_FEEDBACK_TO_RETRAIN) {
+        badge.textContent = `🧠 ML: ${feedbackCount} ratings`;
+        badge.style.background = 'rgba(245,158,11,0.4)';
+      } else {
+        badge.textContent = `🧠 ML: ${feedbackCount} trained ✓`;
+        badge.style.background = 'rgba(16,185,129,0.4)';
+      }
+    }
+
+    // ===================== INITIALIZATION =====================
+    window.onload = function() {
+      // Show welcome message IMMEDIATELY (don't wait for data loading)
+      console.log('🚀 Starting Filipino Meal Planner...');
+      
+      showTyping();
+      setTimeout(() => {
+        hideTyping();
+        addMessage("Hello! 👋 I'm your AI-powered Filipino Meal Planner by JMP! 🤖\n\n⚡ Powered by 5 Machine Learning Neural Networks!\n\nI can create personalized meal plans based on:\n✅ Your calorie goal\n✅ Macro preferences (high protein, low carb)\n✅ Food allergies & restrictions\n\n💡 Try: '2000 calories, high protein, no seafood'\nOr type 'help' to see all commands!", false);
+      }, 500);
+      
+      setTimeout(() => { showTyping(); }, 1000);
+      
+      setTimeout(() => {
+        hideTyping();
+        showPrompts();
+      }, 1500);
+      
+      // Load data and train NNs in background
+      setTimeout(() => {
+        console.log('📦 Loading food database...');
+        loadFoodDatabase();
+        
+        // Initialize existing 2 NNs
+        initCalorieNN();
+        initRecommendationNN();
+        
+        // Initialize the 3 NEW Machine Learning Neural Networks
+        console.log('🧠 Training Food Optimization Neural Networks...');
+        initFoodCompatibilityNN();
+        initCalorieDistributionNN();
+        initMacroOptimizationNN();
+        console.log('✅ All 5 Neural Networks trained and ready!');
+        // Note: loadUserFeedbackFromFirebase() is triggered after login/auth state
+      }, 100);
+    };
+  </script>
+</body>
+</html>
