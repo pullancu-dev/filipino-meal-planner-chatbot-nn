@@ -64,5 +64,5 @@ This project uses **5 Neural Networks** powered by Brain.js that actually learn 
 
 ```
 filipino-meal-planner-chatbot-nn/
-├── meal_planner_chatbot.html        # Main app (all-in-one)
+├── index.html        # Main app (all-in-one)
 └── chatbot_food_database_COMPLETE.csv  # 542 Filipino foods dataset
